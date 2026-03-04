@@ -1,0 +1,33 @@
+{
+  "name": "allos-home",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "14.2.5",
+    "react": "^18",
+    "react-dom": "^18",
+    "framer-motion": "^11.3.0",
+    "@react-three/fiber": "^8.16.8",
+    "@react-three/drei": "^9.109.2",
+    "three": "^0.166.1",
+    "react-intersection-observer": "^9.13.0",
+    "@supabase/supabase-js": "^2.45.0",
+    "date-fns": "^3.6.0",
+    "lucide-react": "^0.441.0"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/three": "^0.166.0",
+    "tailwindcss": "^3.4.1",
+    "autoprefixer": "^10.0.1",
+    "postcss": "^8"
+  }
+}
