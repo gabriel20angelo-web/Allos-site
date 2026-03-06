@@ -63,8 +63,6 @@ export default function FaqCTA() {
         >
           <motion.a
             href="https://chat.whatsapp.com/JpZtYWJovU03VlrZJ5oUxQ" target="_blank" rel="noopener noreferrer"
-            target="_blank"
-            rel="noreferrer"
             whileHover={{ scale: 1.04, boxShadow: "0 6px 22px rgba(37,211,102,.3)" }}
             whileTap={{ scale: 0.97 }}
             className="inline-flex items-center gap-2.5 font-dm font-semibold text-white rounded-full hover:opacity-90 transition-all"
