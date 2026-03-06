@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import Link from "next/link";
 
 const etapas = [
   {n:"01",nome:"Inscrições",desc:"Formulário inicial de candidatura"},
@@ -44,16 +45,17 @@ export default function EtapasPS() {
             ))}
           </div>
         </div>
-        {/* CTA card */}
         <motion.div initial={{opacity:0,y:16}} animate={inView?{opacity:1,y:0}:{}} transition={{delay:.85,duration:.6}}
           className="mt-16 p-8 md:p-10 rounded-2xl text-center"
           style={{background:"#FDFBF7",border:"1px solid #E5DFD3"}}>
           <p className="font-dm text-[11px] tracking-[.24em] text-[#C84B31] uppercase mb-2">Prepare-se</p>
           <p className="font-fraunces font-bold text-[#1A1A1A] text-xl mb-3">Prepare-se para a avaliação</p>
           <p className="font-dm text-[#5C5C5C] text-sm mb-6 max-w-[500px] mx-auto leading-relaxed">Conheça os critérios, assista aos vídeos de suporte e participe dos grupos formativos antes da sua avaliação.</p>
-          <motion.a href="#" whileHover={{scale:1.04,boxShadow:"0 6px 20px rgba(200,75,49,.25)"}} whileTap={{scale:.97}}
-            className="inline-flex font-dm font-semibold text-white bg-[#C84B31] rounded-full hover:bg-[#A33D27] transition-colors"
-            style={{padding:"11px 28px",fontSize:"14px"}}>Conheça a Formação</motion.a>
+          <motion.div whileHover={{scale:1.04,boxShadow:"0 6px 20px rgba(200,75,49,.25)"}} whileTap={{scale:.97}} className="inline-block">
+            <Link href="/formacao"
+              className="inline-flex font-dm font-semibold text-white bg-[#C84B31] rounded-full hover:bg-[#A33D27] transition-colors"
+              style={{padding:"11px 28px",fontSize:"14px"}}>Conheça a Formação</Link>
+          </motion.div>
         </motion.div>
       </div>
     </section>

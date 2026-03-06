@@ -1,6 +1,7 @@
 "use client";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import Link from "next/link";
 
 const GRAIN = `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
 
@@ -9,7 +10,6 @@ const DOT_GRID = {
   backgroundSize: "32px 32px",
 };
 
-// ─── Ícones SVG inline ────────────────────────────────────────────────────────
 const IcoGraduate = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C84B31" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
@@ -61,8 +61,7 @@ function ContentCard({ index, label, title, paragraphs, icon }: {
             borderRight: reversed ? undefined : "1px solid rgba(253,251,247,0.05)",
             borderLeft: reversed ? "1px solid rgba(253,251,247,0.05)" : undefined,
           }}>
-          <motion.div
-            className="inline-flex items-center justify-center w-11 h-11 rounded-xl mb-6"
+          <motion.div className="inline-flex items-center justify-center w-11 h-11 rounded-xl mb-6"
             style={{ background: "rgba(200,75,49,.1)", border: "1px solid rgba(200,75,49,.2)" }}
             whileHover={{ y: -2 }} transition={{ duration: 0.25 }}>
             {icon}
@@ -91,7 +90,7 @@ function ExcelenciaSection() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
   const diferenciais = [
-    "Supervisão por psicólogos sêniores",
+    "Supervisão por psicólogos sênores",
     "Múltiplas abordagens teóricas",
     "Acompanhamento de casos em tempo real",
     "Seleção rigorosa de terapeutas",
@@ -103,19 +102,11 @@ function ExcelenciaSection() {
       transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
       className="relative rounded-3xl overflow-hidden flex flex-col md:flex-row"
       style={{ border: "1px solid rgba(200,75,49,0.2)", minHeight: "400px" }}>
-      {/* Lado esquerdo */}
       <div className="md:w-1/2 relative p-10 md:p-14 flex flex-col justify-center"
         style={{ background: "rgba(200,75,49,.07)" }}>
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: "radial-gradient(ellipse 80% 60% at 20% 50%,rgba(200,75,49,.1) 0%,transparent 70%)" }} />
         <div className="absolute inset-0 pointer-events-none opacity-[.025]" style={{ backgroundImage: GRAIN }} />
-        <div className="absolute right-0 top-0 bottom-0 w-28 pointer-events-none overflow-hidden opacity-10">
-          <svg viewBox="0 0 110 400" className="h-full" fill="none">
-            <circle cx="110" cy="200" r="180" stroke="#C84B31" strokeWidth="0.7" strokeDasharray="5 7"/>
-            <circle cx="110" cy="200" r="110" stroke="#C84B31" strokeWidth="0.6" strokeDasharray="3 6"/>
-            <circle cx="110" cy="200" r="55" stroke="#C84B31" strokeWidth="0.7"/>
-          </svg>
-        </div>
         <div className="relative z-10">
           <span className="font-dm font-semibold text-xs tracking-widest text-[#C84B31] uppercase mb-1 pb-2 inline-block"
             style={{ borderBottom: "2px solid rgba(200,75,49,0.4)" }}>
@@ -123,8 +114,7 @@ function ExcelenciaSection() {
           </span>
           <h2 className="font-fraunces font-bold text-[#FDFBF7] leading-tight mt-4 mb-7"
             style={{ fontSize: "clamp(22px,3vw,36px)", letterSpacing: "-0.02em" }}>
-            Excelência Clínica{" "}
-            <span className="italic text-[#C84B31]">como princípio</span>
+            Excelência Clínica <span className="italic text-[#C84B31]">como princípio</span>
           </h2>
           <div className="space-y-4 font-dm leading-relaxed mb-8"
             style={{ fontSize: "clamp(14px,1.4vw,15px)", color: "rgba(253,251,247,0.65)" }}>
@@ -143,7 +133,6 @@ function ExcelenciaSection() {
           </div>
         </div>
       </div>
-      {/* Lado direito */}
       <div className="md:w-1/2 p-10 md:p-14 flex flex-col justify-center"
         style={{ background: "rgba(253,251,247,0.018)", borderLeft: "1px solid rgba(200,75,49,0.15)" }}>
         <p className="font-dm font-semibold text-xs tracking-widest uppercase mb-8"
@@ -172,7 +161,6 @@ function ExcelenciaSection() {
     </motion.div>
   );
 }
-
 
 function Metric({ value, label, sublabel, delay = 0 }: {
   value: string; label: string; sublabel: string; delay?: number;
@@ -213,12 +201,6 @@ function ClinicaCTA() {
     <section ref={ref} className="relative py-32 px-6 md:px-10 overflow-hidden"
       style={{ background: "linear-gradient(135deg, #1A1A1A 0%, #0F0F0F 100%)" }}>
       <div className="absolute inset-0 pointer-events-none opacity-[.025]" style={{ backgroundImage: GRAIN }} />
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-        <p className="font-fraunces italic text-[#FDFBF7] text-center whitespace-nowrap select-none"
-          style={{ fontSize: "clamp(36px,7vw,92px)", opacity: 0.025, letterSpacing: "-0.03em" }}>
-          Cuidar com rigor e um ato etico
-        </p>
-      </div>
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[280px] pointer-events-none"
         style={{ background: "radial-gradient(ellipse at bottom,rgba(200,75,49,.12) 0%,transparent 70%)" }} />
       <div className="relative z-10 max-w-[680px] mx-auto text-center">
@@ -231,13 +213,6 @@ function ClinicaCTA() {
           <div className="h-px w-12 bg-[#C84B31] opacity-20" />
           <div className="w-1.5 h-1.5 rounded-full bg-[#C84B31] opacity-50" />
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.1, duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6 font-dm text-xs font-medium"
-          style={{ background: "rgba(200,75,49,.1)", border: "1px solid rgba(200,75,49,.25)", color: "rgba(253,251,247,0.7)" }}>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#C84B31] animate-pulse inline-block" />
-          Pronto para comecar?
-        </motion.div>
         <motion.h2 initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.15, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="font-fraunces font-bold text-[#FDFBF7] leading-tight mb-5"
@@ -248,8 +223,7 @@ function ClinicaCTA() {
           transition={{ delay: 0.22, duration: 0.6 }}
           className="font-dm leading-relaxed mb-10"
           style={{ fontSize: "clamp(15px,1.6vw,17px)", color: "rgba(253,251,247,0.45)" }}>
-          O cuidado psicologico na Allos e pensado a partir da realidade de cada pessoa,
-          oferecendo escuta qualificada, acompanhamento responsavel e respeito a singularidade de cada historia.
+          O cuidado psicológico na Allos é pensado a partir da realidade de cada pessoa, oferecendo escuta qualificada, acompanhamento responsável e respeito à singularidade de cada história.
         </motion.p>
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={inView ? { opacity: 1, scale: 1 } : {}}
           transition={{ delay: 0.3, duration: 0.5 }}>
@@ -260,12 +234,19 @@ function ClinicaCTA() {
             whileTap={{ scale: 0.97 }}
             animate={{ boxShadow: ["0 0 0 0px rgba(200,75,49,0.5)","0 0 0 14px rgba(200,75,49,0)","0 0 0 0px rgba(200,75,49,0)"] }}
             transition={{ boxShadow: { duration: 2.2, repeat: Infinity, ease: "easeOut" } }}>
-            Agendar Sessao
+            Agendar Sessão
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
               <path d="M3 8H13M9 4L13 8L9 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </motion.a>
         </motion.div>
+        {/* Subtle FAQ reference */}
+        <p className="font-dm text-[12px] mt-8" style={{ color: "rgba(253,251,247,0.25)" }}>
+          Dúvidas sobre a clínica?{" "}
+          <Link href="/faq" className="text-[rgba(253,251,247,0.4)] hover:text-[#C84B31] transition-colors underline" style={{ textUnderlineOffset: "3px" }}>
+            Consulte nosso FAQ
+          </Link>
+        </p>
       </div>
     </section>
   );
@@ -276,31 +257,31 @@ export default function ClinicaContent() {
   const introInView = useInView(introRef, { once: true, margin: "-40px" });
   const cards = [
     {
-      label: "Formacao", title: "Clinica Escola e Formacao Supervisionada", icon: <IcoGraduate />,
+      label: "Formação", title: "Clínica Escola e Formação Supervisionada", icon: <IcoGraduate />,
       paragraphs: [
-        "Os atendimentos sao realizados por terapeutas em formacao avancada, supervisionados por profissionais experientes e registrados nos conselhos competentes — garantindo cuidado clinico atento, fundamentado cientificamente e alinhado as melhores praticas da psicologia.",
-        "A clinica funciona como espaco de aprendizado continuo, onde teoria e pratica se articulam de forma etica, reflexiva e comprometida com a singularidade de cada pessoa atendida.",
+        "Os atendimentos são realizados por terapeutas em formação avançada, supervisionados por profissionais experientes e registrados nos conselhos competentes — garantindo cuidado clínico atento, fundamentado cientificamente e alinhado às melhores práticas da psicologia.",
+        "A clínica funciona como espaço de aprendizado contínuo, onde teoria e prática se articulam de forma ética, reflexiva e comprometida com a singularidade de cada pessoa atendida.",
       ],
     },
     {
-      label: "Acessibilidade", title: "Atendimento Clinico Acessivel e Responsavel", icon: <IcoHeart />,
+      label: "Acessibilidade", title: "Atendimento Clínico Acessível e Responsável", icon: <IcoHeart />,
       paragraphs: [
-        "A Allos oferece atendimentos psicologicos a valores sociais, mantendo padrao tecnico rigoroso e acompanhamento constante dos casos. O objetivo e ampliar o acesso ao cuidado em saude mental sem comprometer a qualidade clinica.",
-        "Atuamos com diferentes abordagens psicoterapeuticas, possibilitando que cada paciente seja acolhido de acordo com suas demandas, contexto e necessidades subjetivas.",
+        "A Allos oferece atendimentos psicológicos a valores sociais, mantendo padrão técnico rigoroso e acompanhamento constante dos casos. O objetivo é ampliar o acesso ao cuidado em saúde mental sem comprometer a qualidade clínica.",
+        "Atuamos com diferentes abordagens psicoterapeúticas, possibilitando que cada paciente seja acolhido de acordo com suas demandas, contexto e necessidades subjetivas.",
       ],
     },
     {
-      label: "Institucional", title: "Projetos Clinicos e Atuacao Institucional", icon: <IcoBuilding />,
+      label: "Institucional", title: "Projetos Clínicos e Atuação Institucional", icon: <IcoBuilding />,
       paragraphs: [
-        "Para alem do consultorio tradicional, a Allos desenvolve projetos clinicos em contextos diversos: instituicoes privadas, prefeituras, residencias terapeuticas, organizacoes sociais e ambientes que demandam atencao psicologica qualificada.",
-        "Esses projetos refletem nossa visao de uma psicologia que ultrapassa muros, alcanca territorios negligenciados e atua de forma etica diante das urgencias contemporaneas em saude mental.",
+        "Para além do consultório tradicional, a Allos desenvolve projetos clínicos em contextos diversos: instituições privadas, prefeituras, residências terapêuticas, organizações sociais e ambientes que demandam atenção psicológica qualificada.",
+        "Esses projetos refletem nossa visão de uma psicologia que ultrapassa muros, alcança territórios negligenciados e atua de forma ética diante das urgências contemporâneas em saúde mental.",
       ],
     },
   ];
   const metrics = [
-    { value: "200+", label: "pacientes em atendimento ativo", sublabel: "em acompanhamento este mes" },
-    { value: "80+", label: "terapeutas associados", sublabel: "distribuidos em todo o Brasil" },
-    { value: "2/3", label: "dos atendimentos chegam", sublabel: "por indicacao de pacientes" },
+    { value: "200+", label: "pacientes em atendimento ativo", sublabel: "em acompanhamento este mês" },
+    { value: "80+", label: "terapeutas associados", sublabel: "distribuídos em todo o Brasil" },
+    { value: "2/3", label: "dos atendimentos chegam", sublabel: "por indicação de pacientes" },
   ];
   return (
     <>
@@ -311,15 +292,13 @@ export default function ClinicaContent() {
             transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
             className="font-dm leading-relaxed max-w-[680px] mb-14"
             style={{ fontSize: "clamp(16px,1.8vw,19px)", color: "rgba(253,251,247,0.55)" }}>
-            A Associacao Allos mantem um compromisso rigoroso com a excelencia clinica,
-            a etica profissional e o cuidado responsavel em saude mental, integrando
-            pratica supervisionada, diversidade teorica e compromisso social.
+            A Associação Allos mantém um compromisso rigoroso com a excelência clínica, a ética profissional e o cuidado responsável em saúde mental, integrando prática supervisionada, diversidade teórica e compromisso social.
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 12 }} animate={introInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.25, duration: 0.6 }}
             className="flex flex-wrap items-center gap-3 pt-8"
             style={{ borderTop: "1px solid rgba(253,251,247,0.07)" }}>
-            {["Formacao Supervisionada", "Atendimento Acessivel", "Atuacao Institucional"].map((p, i) => (
+            {["Formação Supervisionada", "Atendimento Acessível", "Atuação Institucional"].map((p, i) => (
               <div key={p} className="flex items-center gap-3">
                 {i > 0 && <div className="w-1 h-1 rounded-full bg-[#C84B31] opacity-60" />}
                 <span className="font-dm font-semibold text-xs tracking-widest uppercase"
@@ -350,7 +329,7 @@ export default function ClinicaContent() {
             transition={{ duration: 0.6 }} className="flex items-center gap-4 mb-20">
             <div className="h-px flex-1 max-w-[64px]"
               style={{ background: "linear-gradient(to right,transparent,rgba(200,75,49,0.5))" }} />
-            <p className="font-dm font-semibold text-xs tracking-widest text-[#C84B31] uppercase">Numeros da Clinica</p>
+            <p className="font-dm font-semibold text-xs tracking-widest text-[#C84B31] uppercase">Números da Clínica</p>
             <div className="h-px flex-1"
               style={{ background: "linear-gradient(to right,rgba(200,75,49,0.5),transparent)" }} />
           </motion.div>

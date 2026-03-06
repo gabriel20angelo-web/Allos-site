@@ -28,7 +28,7 @@ export default function ConvitePS() {
             <div className="space-y-4 font-dm text-[#5C5C5C] text-[14px] leading-relaxed mb-8">
               <p>Os encontros são <strong className="text-[#1A1A1A]">abertos e gratuitos</strong>, realizados via <strong className="text-[#1A1A1A]">Google Meet</strong>. O cronograma é divulgado no grupo oficial do processo seletivo no WhatsApp.</p>
             </div>
-            <motion.a href="https://chat.whatsapp.com/JpZtYWJovU03VlrZJ5oUxQ" target="_blank" rel="noopener noreferrer"
+            <motion.a href="https://chat.whatsapp.com/KP2z0vFRaSVBSXRjIyvR3R" target="_blank" rel="noopener noreferrer"
               whileHover={{scale:1.04,boxShadow:"0 6px 22px rgba(37,211,102,.3)"}} whileTap={{scale:.97}}
               className="inline-flex items-center gap-3 font-dm font-semibold text-white rounded-full mb-8 hover:opacity-90 transition-opacity"
               style={{background:"#25D366",padding:"13px 24px",fontSize:"14px"}}>

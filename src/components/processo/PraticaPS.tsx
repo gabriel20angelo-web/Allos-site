@@ -27,7 +27,6 @@ export default function PraticaPS() {
           <motion.p key={i} initial={{opacity:0,y:10}} animate={inView?{opacity:1,y:0}:{}} transition={{delay:.1+i*.08,duration:.6}}
             className="font-dm text-[#5C5C5C] leading-relaxed mb-5 text-[15px]">{p}</motion.p>
         ))}
-        {/* Highlight box — como no original */}
         <motion.div initial={{opacity:0,y:22}} animate={inView?{opacity:1,y:0}:{}} transition={{delay:.25,duration:.7,ease:[.22,1,.36,1]}}
           className="rounded-2xl overflow-hidden mt-10"
           style={{background:"linear-gradient(135deg,rgba(200,75,49,.07) 0%,rgba(45,106,79,.04) 100%)",border:"1px solid #E5DFD3"}}>

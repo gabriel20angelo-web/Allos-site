@@ -82,7 +82,7 @@ function CtaParceria() {
             </svg>
             Enviar proposta
           </motion.a>
-          <motion.a href="#"
+          <motion.a href="/projetos"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             className="inline-flex items-center gap-2 font-dm font-medium rounded-full transition-all"
@@ -106,7 +106,6 @@ export default function ParceriasContent() {
     <section className="py-20 md:py-28 px-6 md:px-10"
       style={{ background: "radial-gradient(ellipse at 95% 0%,rgba(200,75,49,.04) 0%,transparent 50%),#161616" }}>
       <div className="max-w-[1200px] mx-auto">
-        {/* Texto introdutório */}
         <div ref={ref} className="max-w-[720px] mb-16">
           <motion.p initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}
             className="font-dm font-semibold text-[11px] tracking-[.26em] text-[#C84B31] uppercase mb-4">
@@ -124,7 +123,6 @@ export default function ParceriasContent() {
           </motion.p>
         </div>
 
-        {/* Linha divisória com label */}
         <motion.div initial={{ opacity: 0, scaleX: 0 }} whileInView={{ opacity: 1, scaleX: 1 }} viewport={{ once: true }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="flex items-center gap-6 mb-12 origin-left">
@@ -135,14 +133,12 @@ export default function ParceriasContent() {
           <div className="h-px flex-1" style={{ background: "rgba(253,251,247,0.07)" }} />
         </motion.div>
 
-        {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           {tiposParcerias.map((item, i) => (
             <TipoCard key={item.title} item={item} index={i} />
           ))}
         </div>
 
-        {/* CTA box */}
         <CtaParceria />
       </div>
     </section>

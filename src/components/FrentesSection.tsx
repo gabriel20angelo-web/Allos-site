@@ -17,8 +17,8 @@ const cards = [
       </svg>
     ),
     btns: [
-      { t: "Saiba mais", solid: true, href: "#" },
-      { t: "Documentos", solid: false, href: "#" },
+      { t: "Saiba mais", solid: true, href: "/sobre" },
+      { t: "Documentos", solid: false, href: "/documentos" },
     ],
   },
   {
@@ -31,7 +31,7 @@ const cards = [
         <path d="M12 8v4l3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     ),
-    btns: [{ t: "Ver serviços", solid: true, href: "#" }],
+    btns: [{ t: "Ver serviços", solid: true, href: "/parcerias" }],
   },
   {
     label: "FORMAÇÃO",
@@ -47,7 +47,7 @@ const cards = [
       {
         t: "WhatsApp Allos",
         solid: false,
-        href: "https://chat.whatsapp.com/JpZtYWJovU03VlrZJ5oUxQ",
+        href: "https://chat.whatsapp.com/KP2z0vFRaSVBSXRjIyvR3R",
       },
     ],
   },

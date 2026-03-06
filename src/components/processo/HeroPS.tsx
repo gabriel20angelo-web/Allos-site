@@ -7,7 +7,6 @@ export default function HeroPS() {
   return (
     <section className="relative min-h-[100dvh] flex items-center overflow-hidden"
       style={{background:"radial-gradient(ellipse at 20% 80%,rgba(200,75,49,.07) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(45,106,79,.04) 0%,transparent 50%),#FDFBF7"}}>
-      {/* Decorativo */}
       <div className="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none opacity-[.035] hidden lg:block"
         style={{backgroundImage:"radial-gradient(circle at 70% 50%,rgba(200,75,49,1) 0%,transparent 60%)"}}>
         <svg className="absolute right-16 top-1/2 -translate-y-1/2 w-80 h-80" viewBox="0 0 320 320" fill="none">
@@ -18,7 +17,6 @@ export default function HeroPS() {
           <circle cx="160" cy="160" r="4" fill="#C84B31"/>
         </svg>
       </div>
-
       <div className="relative z-10 max-w-[1200px] mx-auto px-6 md:px-10 py-36 w-full">
         <div className="max-w-[680px]">
           <motion.div {...up(.1)} className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-10"

@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import ImagePlaceholder from "./ImagePlaceholder";
+import Image from "next/image";
 
 export default function EstruturaPS() {
   const {ref,inView} = useInView({triggerOnce:true,threshold:.1});
@@ -31,8 +31,8 @@ export default function EstruturaPS() {
           ))}
         </div>
         <motion.div initial={{opacity:0,x:22}} animate={inView?{opacity:1,x:0}:{}} transition={{delay:.2,duration:.8,ease:[.22,1,.36,1]}} className="sticky top-24">
-          {/* Substitua por: <img src="/foto.jpg" className="w-full h-[520px] object-cover rounded-2xl" alt="..."/> */}
-          <ImagePlaceholder className="w-full h-[520px]"/>
+          <Image src="/allos-grupo.jpg" alt="Grupo formativo da Associação Allos" width={1280} height={960}
+            className="w-full h-[520px] object-cover rounded-2xl" style={{objectPosition:"center 40%"}}/>
         </motion.div>
       </div>
     </section>

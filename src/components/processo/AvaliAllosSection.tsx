@@ -21,14 +21,11 @@ export default function AvaliAllosSection() {
   const {ref,inView} = useInView({triggerOnce:true,threshold:.15});
   return (
     <section ref={ref} className="py-24 md:py-32 relative overflow-hidden" style={{background:"#1A1A1A"}}>
-      {/* Grain */}
       <div className="absolute inset-0 pointer-events-none opacity-[.025]"
         style={{backgroundImage:"url(\"data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")"}}/>
       <div className="absolute top-0 left-0 w-[400px] h-[300px] pointer-events-none"
         style={{background:"radial-gradient(ellipse at top left,rgba(200,75,49,.1) 0%,transparent 60%)"}}/>
-
       <div className="relative z-10 max-w-[1100px] mx-auto px-6 md:px-10">
-        {/* Título */}
         <div className="text-center mb-16">
           <motion.div initial={{opacity:0,y:10}} animate={inView?{opacity:1,y:0}:{}} transition={{duration:.5}}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8"
@@ -47,8 +44,6 @@ export default function AvaliAllosSection() {
             Avaliação de Aptidão Clínica — onde transformamos talento em legado através de feedback, prática e crescimento contínuo.
           </motion.p>
         </div>
-
-        {/* Escala de pontuação — como no original */}
         <motion.div initial={{opacity:0,y:20}} animate={inView?{opacity:1,y:0}:{}} transition={{delay:.25,duration:.7}}
           className="relative mb-12 pb-10" style={{borderBottom:"1px solid rgba(255,255,255,.08)"}}>
           <div className="flex justify-between items-end">
@@ -70,8 +65,6 @@ export default function AvaliAllosSection() {
             style={{background:"linear-gradient(to right,#EF4444,#FBBF24 50%,#10B981)"}}
             initial={{scaleX:0}} animate={inView?{scaleX:1}:{}} transition={{delay:.55,duration:1,ease:[.22,1,.36,1]}}/>
         </motion.div>
-
-        {/* 3 cards glassmorphism — como no original */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-14">
           {[
             {i:"📊",t:"Escala por Competência",b:"Cada uma das 12 competências é avaliada de -9 (erro fatal) a +9 (excepcional). A soma gera sua nota total."},
@@ -87,8 +80,6 @@ export default function AvaliAllosSection() {
             </motion.div>
           ))}
         </div>
-
-        {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           {[{v:5,s:"%",l:"Taxa de aprovação na 1ª tentativa"},{v:12,s:"",l:"Competências avaliadas"},{v:25,s:"",p:"+",l:"Nota de corte para aprovação"}].map((s,i) => (
             <motion.div key={i} initial={{opacity:0,y:16}} animate={inView?{opacity:1,y:0}:{}} transition={{delay:.6+i*.1,duration:.6}}

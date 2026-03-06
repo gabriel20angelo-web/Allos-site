@@ -318,7 +318,22 @@ function SectionBlock({ section, accent }: { section: PageSection; accent: strin
   );
 }
 
-/* ── Competency Grid ── */
+/* ── Competency Grid — with links ── */
+
+const COMP_LINKS: Record<string, string> = {
+  "Estágio de Mudança": "/estagios-mudanca",
+  "Estrutura do Atendimento": "/coerencia-consistencia",
+  "Abertura & Encerramento": "/abertura-encerramento",
+  "Acolhimento": "/acolhimento",
+  "Segurança no Terapeuta": "/seguranca-terapeuta",
+  "Segurança no Método": "/seguranca-metodo",
+  "Aprofundar / Investigação": "/aprofundamento",
+  "Hipóteses Clínicas": "/hipoteses-clinicas",
+  "Interpretação": "/interpretacao",
+  "Frase & Timing": "/frase-timing",
+  "Corpo & Setting": "/setting-corpo",
+  "Insight & Potência": "/potencia-insight",
+};
 
 const ALL_COMPS = [
   { cat: "Estrutura", items: ["Estágio de Mudança", "Estrutura do Atendimento", "Abertura & Encerramento"] },
@@ -337,10 +352,13 @@ function CompGrid({ activeComp, accent }: { activeComp: string; accent: string }
         <Reveal>
           <div className="text-center mb-10">
             <p className="font-dm font-semibold text-[11px] tracking-[.26em] text-[#C84B31] uppercase mb-4">AvaliAllos</p>
-            <h2 className="font-fraunces font-bold text-[#FDFBF7]"
+            <h2 className="font-fraunces font-bold text-[#FDFBF7] mb-3"
               style={{ fontSize: "clamp(24px,3.5vw,40px)", letterSpacing: "-0.02em" }}>
               Grade de <span className="italic text-[#C84B31]">Competências</span>
             </h2>
+            <p className="font-dm text-sm mx-auto" style={{ color: "rgba(253,251,247,0.38)", maxWidth: 460 }}>
+              Clique em qualquer competência para explorar em detalhes.
+            </p>
           </div>
         </Reveal>
         <Reveal>
@@ -348,18 +366,24 @@ function CompGrid({ activeComp, accent }: { activeComp: string; accent: string }
             const color = CAT_COLORS[cat] || "#C84B31";
             return (
               <div key={cat} className="mb-6">
-                <p className="font-dm font-semibold text-[10px] tracking-[.2em] uppercase mb-3" style={{ color }}>{cat}</p>
+                <div className="flex items-center gap-2.5 mb-3">
+                  <div className="w-2.5 h-2.5 rounded-sm" style={{ background: color }} />
+                  <p className="font-dm font-semibold text-[10px] tracking-[.2em] uppercase" style={{ color: "rgba(253,251,247,0.3)" }}>{cat}</p>
+                  <div className="flex-1 h-px" style={{ background: "rgba(253,251,247,0.05)" }} />
+                </div>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {items.map((name) => {
                     const isActive = name === activeComp;
+                    const href = COMP_LINKS[name] || "#";
                     return (
-                      <motion.div key={name} className="rounded-xl py-4 px-5 relative"
+                      <motion.a key={name} href={href}
+                        className="group rounded-xl py-4 px-5 relative block no-underline cursor-pointer"
                         style={{
                           background: isActive ? `${color}22` : "rgba(253,251,247,0.022)",
                           border: isActive ? `1px solid ${color}70` : "1px solid rgba(253,251,247,0.055)",
                           borderLeft: `3px solid ${color}`,
                         }}
-                        whileHover={{ y: -2, background: "rgba(253,251,247,0.04)" }}>
+                        whileHover={{ y: -3, boxShadow: `0 8px 24px rgba(0,0,0,.2), 0 0 0 1px ${color}30` }}>
                         {isActive && (
                           <span className="absolute top-2 right-3 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full font-dm text-[9px] font-semibold tracking-wider uppercase"
                             style={{ background: `${color}28`, border: `1px solid ${color}50`, color }}>
@@ -367,15 +391,49 @@ function CompGrid({ activeComp, accent }: { activeComp: string; accent: string }
                             Está aqui
                           </span>
                         )}
-                        <p className="font-dm text-[10px] font-semibold tracking-[.2em] uppercase mb-1" style={{ color }}>{cat}</p>
-                        <p className="font-dm text-sm" style={{ color: isActive ? "rgba(253,251,247,0.85)" : "rgba(253,251,247,0.55)" }}>{name}</p>
-                      </motion.div>
+                        <p className="font-dm text-sm group-hover:text-[#FDFBF7] transition-colors" style={{ color: isActive ? "rgba(253,251,247,0.85)" : "rgba(253,251,247,0.55)" }}>{name}</p>
+                        <p className="font-dm text-[11px] mt-1 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color }}>Explorar →</p>
+                      </motion.a>
                     );
                   })}
                 </div>
               </div>
             );
           })}
+        </Reveal>
+
+        {/* Formação CTA */}
+        <Reveal delay={0.15}>
+          <div className="mt-14 rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6"
+            style={{ background: "rgba(253,251,247,0.03)", border: "1px solid rgba(253,251,247,0.06)" }}>
+            <div>
+              <p className="font-dm text-[11px] tracking-[.2em] uppercase mb-2" style={{ color: "rgba(253,251,247,0.35)" }}>Quer ir além?</p>
+              <p className="font-fraunces font-bold text-[#FDFBF7] text-lg">Conheça nossa formação contínua</p>
+              <p className="font-dm text-sm mt-1" style={{ color: "rgba(253,251,247,0.4)" }}>Supervisão, grupos práticos e desenvolvimento clínico estruturado.</p>
+            </div>
+            <motion.a href="/formacao"
+              className="flex-shrink-0 inline-flex items-center gap-2 font-dm font-semibold text-sm text-white rounded-full transition-colors"
+              style={{ padding: "12px 28px", background: "#C84B31" }}
+              whileHover={{ scale: 1.04, boxShadow: "0 6px 20px rgba(200,75,49,.3)" }}
+              whileTap={{ scale: 0.97 }}>
+              Conhecer a formação
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </motion.a>
+          </div>
+        </Reveal>
+
+        {/* PBE reference — subtle */}
+        <Reveal delay={0.2}>
+          <div className="mt-5 flex items-center justify-center gap-3 py-4">
+            <div className="h-px w-8" style={{ background: "rgba(253,251,247,0.06)" }} />
+            <p className="font-dm text-[12px]" style={{ color: "rgba(253,251,247,0.3)" }}>
+              Quer entender a ciência por trás?{" "}
+              <a href="/pbe" className="transition-colors hover:text-[#C84B31]" style={{ color: "rgba(253,251,247,0.5)", textDecoration: "underline", textUnderlineOffset: "3px" }}>
+                Conheça a história da Prática Deliberada
+              </a>
+            </p>
+            <div className="h-px w-8" style={{ background: "rgba(253,251,247,0.06)" }} />
+          </div>
         </Reveal>
       </div>
     </section>
@@ -407,7 +465,7 @@ function CtaSection({ title, titleAccent, text, accent }: { title: string; title
             {title} <span className="italic" style={{ color: accent }}>{titleAccent}</span>
           </h2>
           <p className="font-dm mx-auto mb-10" style={{ color: "rgba(253,251,247,0.45)", maxWidth: 560 }}>{text}</p>
-          <motion.a href="https://wa.me/5531987577892" target="_blank" rel="noopener noreferrer"
+          <motion.a href="https://bit.ly/terapiasite" target="_blank" rel="noopener noreferrer"
             className="inline-flex items-center gap-3 font-dm font-semibold text-white rounded-full"
             style={{ padding: "17px 52px", fontSize: "15px", background: accent }}
             whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}
@@ -419,7 +477,7 @@ function CtaSection({ title, titleAccent, text, accent }: { title: string; title
             </svg>
           </motion.a>
           <p className="font-dm text-sm mt-12" style={{ color: "rgba(253,251,247,0.3)" }}>
-            R$200/mês · Rua Rio Negro, 1048, Barroca, BH – MG<br />
+            Rua Rio Negro, 1048, Barroca, BH – MG<br />
             suporte@allos.org.br · +55 31 98757-7892
           </p>
         </Reveal>

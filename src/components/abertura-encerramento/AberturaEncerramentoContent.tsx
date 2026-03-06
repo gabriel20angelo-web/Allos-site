@@ -1257,128 +1257,103 @@ export default function AberturaEncerramentoContent() {
 
           <Reveal>
             <h2
-              className="font-fraunces font-bold text-[#FDFBF7] mb-4"
-              style={{
-                fontSize: "clamp(28px,4vw,48px)",
-                letterSpacing: "-0.02em",
-                lineHeight: 1.15,
-              }}
+              className="font-fraunces font-bold text-[#FDFBF7] mb-3"
+              style={{ fontSize: "clamp(28px,4vw,48px)", letterSpacing: "-0.02em", lineHeight: 1.15 }}
             >
-              Grade de{" "}
-              <span className="italic text-[#C84B31]">Competências</span>
+              Grade de <span className="italic text-[#C84B31]">Competências</span>
             </h2>
-            <p
-              className="font-dm text-sm mb-8"
-              style={{ color: "rgba(253,251,247,0.45)" }}
-            >
-              Escala de{" "}
-              <strong className="text-[#FDFBF7]">-9 a +9</strong> por
-              competência · Nota de corte:{" "}
-              <strong className="text-[#C84B31]">+25</strong> · 12 competências
-              em 4 categorias
+            <p className="font-dm text-sm mb-8" style={{ color: "rgba(253,251,247,0.45)" }}>
+              Clique em qualquer competência para explorar em detalhes.
             </p>
           </Reveal>
 
           <Reveal>
-            {/* Estrutura */}
-            <p
-              className="font-dm font-semibold text-[10px] tracking-[.2em] uppercase mt-8 mb-3"
-              style={{ color: COLORS.estrutura }}
-            >
-              Estrutura
-            </p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <CompCard
-                name="Estágio de Mudança"
-                category="Estrutura"
-                color={COLORS.estrutura}
-              />
-              <CompCard
-                name="Estrutura do Atendimento"
-                category="Estrutura"
-                color={COLORS.estrutura}
-              />
-              <CompCard
-                name="Abertura & Encerramento"
-                category="Estrutura"
-                color={COLORS.estrutura}
-                active
-              />
-            </div>
+            {([
+              { cat: "Estrutura", color: COLORS.estrutura, items: [
+                { name: "Estágio de Mudança", href: "/estagios-mudanca" },
+                { name: "Estrutura do Atendimento", href: "/coerencia-consistencia" },
+                { name: "Abertura & Encerramento", href: "/abertura-encerramento", active: true },
+              ]},
+              { cat: "Relação", color: COLORS.relacao, items: [
+                { name: "Acolhimento", href: "/acolhimento" },
+                { name: "Segurança no Terapeuta", href: "/seguranca-terapeuta" },
+                { name: "Segurança no Método", href: "/seguranca-metodo" },
+              ]},
+              { cat: "Formulação", color: COLORS.formulacao, items: [
+                { name: "Aprofundar / Investigação", href: "/aprofundamento" },
+                { name: "Hipóteses Clínicas", href: "/hipoteses-clinicas" },
+                { name: "Interpretação", href: "/interpretacao" },
+              ]},
+              { cat: "Performance", color: COLORS.performance, items: [
+                { name: "Frase & Timing", href: "/frase-timing" },
+                { name: "Corpo & Setting", href: "/setting-corpo" },
+                { name: "Insight & Potência", href: "/potencia-insight" },
+              ]},
+            ] as const).map(({ cat, color, items }) => (
+              <div key={cat}>
+                <div className="flex items-center gap-2.5 mt-8 mb-3">
+                  <div className="w-2.5 h-2.5 rounded-sm" style={{ background: color }} />
+                  <p className="font-dm font-semibold text-[10px] tracking-[.2em] uppercase" style={{ color: "rgba(253,251,247,0.3)" }}>{cat}</p>
+                  <div className="flex-1 h-px" style={{ background: "rgba(253,251,247,0.05)" }} />
+                </div>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {items.map((c) => (
+                    <motion.a key={c.name} href={c.href}
+                      className="group rounded-xl py-4 px-5 relative block no-underline"
+                      style={{
+                        background: c.active ? `${color}22` : "rgba(253,251,247,0.022)",
+                        border: c.active ? `1px solid ${color}70` : "1px solid rgba(253,251,247,0.055)",
+                        borderLeft: `3px solid ${color}`,
+                      }}
+                      whileHover={{ y: -3, boxShadow: `0 8px 24px rgba(0,0,0,.2), 0 0 0 1px ${color}30` }}>
+                      {c.active && (
+                        <span className="absolute top-2 right-3 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full font-dm text-[9px] font-semibold tracking-wider uppercase"
+                          style={{ background: `${color}28`, border: `1px solid ${color}50`, color }}>
+                          <span className="w-1 h-1 rounded-full animate-pulse" style={{ background: color }} />
+                          Está aqui
+                        </span>
+                      )}
+                      <p className="font-dm text-sm group-hover:text-[#FDFBF7] transition-colors"
+                        style={{ color: c.active ? "rgba(253,251,247,0.85)" : "rgba(253,251,247,0.55)" }}>{c.name}</p>
+                      <p className="font-dm text-[11px] mt-1 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color }}>Explorar →</p>
+                    </motion.a>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </Reveal>
 
-            {/* Relação */}
-            <p
-              className="font-dm font-semibold text-[10px] tracking-[.2em] uppercase mt-8 mb-3"
-              style={{ color: COLORS.relacao }}
-            >
-              Relação
-            </p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <CompCard
-                name="Acolhimento"
-                category="Relação"
-                color={COLORS.relacao}
-              />
-              <CompCard
-                name="Segurança no Terapeuta"
-                category="Relação"
-                color={COLORS.relacao}
-              />
-              <CompCard
-                name="Segurança no Método"
-                category="Relação"
-                color={COLORS.relacao}
-              />
+          {/* Formação CTA */}
+          <Reveal delay={0.15}>
+            <div className="mt-14 rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6"
+              style={{ background: "rgba(253,251,247,0.03)", border: "1px solid rgba(253,251,247,0.06)" }}>
+              <div>
+                <p className="font-dm text-[11px] tracking-[.2em] uppercase mb-2" style={{ color: "rgba(253,251,247,0.35)" }}>Quer ir além?</p>
+                <p className="font-fraunces font-bold text-[#FDFBF7] text-lg">Conheça nossa formação contínua</p>
+                <p className="font-dm text-sm mt-1" style={{ color: "rgba(253,251,247,0.4)" }}>Supervisão, grupos práticos e desenvolvimento clínico estruturado.</p>
+              </div>
+              <motion.a href="/formacao"
+                className="flex-shrink-0 inline-flex items-center gap-2 font-dm font-semibold text-sm text-white rounded-full"
+                style={{ padding: "12px 28px", background: "#C84B31" }}
+                whileHover={{ scale: 1.04, boxShadow: "0 6px 20px rgba(200,75,49,.3)" }}
+                whileTap={{ scale: 0.97 }}>
+                Conhecer a formação
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </motion.a>
             </div>
+          </Reveal>
 
-            {/* Formulação */}
-            <p
-              className="font-dm font-semibold text-[10px] tracking-[.2em] uppercase mt-8 mb-3"
-              style={{ color: COLORS.formulacao }}
-            >
-              Formulação
-            </p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <CompCard
-                name="Aprofundar / Investigação"
-                category="Formulação"
-                color={COLORS.formulacao}
-              />
-              <CompCard
-                name="Hipóteses Clínicas"
-                category="Formulação"
-                color={COLORS.formulacao}
-              />
-              <CompCard
-                name="Interpretação"
-                category="Formulação"
-                color={COLORS.formulacao}
-              />
-            </div>
-
-            {/* Performance */}
-            <p
-              className="font-dm font-semibold text-[10px] tracking-[.2em] uppercase mt-8 mb-3"
-              style={{ color: COLORS.performance }}
-            >
-              Performance
-            </p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <CompCard
-                name="Frase & Timing"
-                category="Performance"
-                color={COLORS.performance}
-              />
-              <CompCard
-                name="Corpo & Setting"
-                category="Performance"
-                color={COLORS.performance}
-              />
-              <CompCard
-                name="Insight & Potência"
-                category="Performance"
-                color={COLORS.performance}
-              />
+          {/* PBE reference */}
+          <Reveal delay={0.2}>
+            <div className="mt-5 flex items-center justify-center gap-3 py-4">
+              <div className="h-px w-8" style={{ background: "rgba(253,251,247,0.06)" }} />
+              <p className="font-dm text-[12px]" style={{ color: "rgba(253,251,247,0.3)" }}>
+                Quer entender a ciência por trás?{" "}
+                <a href="/pbe" className="transition-colors hover:text-[#C84B31]" style={{ color: "rgba(253,251,247,0.5)", textDecoration: "underline", textUnderlineOffset: "3px" }}>
+                  Conheça a história da Prática Deliberada
+                </a>
+              </p>
+              <div className="h-px w-8" style={{ background: "rgba(253,251,247,0.06)" }} />
             </div>
           </Reveal>
         </div>
@@ -1439,7 +1414,7 @@ export default function AberturaEncerramentoContent() {
               segundo ao último.
             </p>
             <motion.a
-              href="https://wa.me/5531987577892"
+              href="https://bit.ly/terapiasite"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-3 font-dm font-semibold text-white bg-[#C84B31] rounded-full"
@@ -1476,7 +1451,7 @@ export default function AberturaEncerramentoContent() {
               className="font-dm text-sm mt-12"
               style={{ color: "rgba(253,251,247,0.3)" }}
             >
-              R$200/mês · Rua Rio Negro, 1048, Barroca, BH – MG
+              Rua Rio Negro, 1048, Barroca, BH – MG
               <br />
               suporte@allos.org.br · +55 31 98757-7892
             </p>

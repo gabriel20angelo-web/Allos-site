@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import ImagePlaceholder from "./ImagePlaceholder";
+import Image from "next/image";
 
 const req = [
   "Você precisa estar na graduação de Psicologia para poder entrar como estagiário na clínica escola (isso não te impede de participar da formação livremente)",
@@ -34,8 +34,8 @@ export default function RequisitosPS() {
           </div>
         </div>
         <motion.div initial={{opacity:0,scale:.96}} animate={inView?{opacity:1,scale:1}:{}} transition={{delay:.2,duration:.8,ease:[.22,1,.36,1]}}>
-          {/* Substitua por: <img src="/sua-foto.jpg" className="w-full h-[420px] object-cover rounded-2xl" alt="..."/> */}
-          <ImagePlaceholder className="w-full h-[420px]"/>
+          <Image src="/allos-roda.jpg" alt="Roda de conversa na Associação Allos" width={1024} height={768}
+            className="w-full h-[420px] object-cover rounded-2xl" style={{objectPosition:"center 30%"}}/>
         </motion.div>
       </div>
     </section>

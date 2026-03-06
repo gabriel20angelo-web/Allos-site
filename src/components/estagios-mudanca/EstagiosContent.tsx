@@ -596,6 +596,20 @@ function TransitionsSection() {
    ══════════════════════════════════════════════ */
 
 function CompetenciasSection() {
+  const COMP_LINKS: Record<string, string> = {
+    "Estágio de Mudança": "/estagios-mudanca",
+    "Estrutura do Atendimento": "/coerencia-consistencia",
+    "Abertura & Encerramento": "/abertura-encerramento",
+    "Acolhimento": "/acolhimento",
+    "Segurança no Terapeuta": "/seguranca-terapeuta",
+    "Segurança no Método": "/seguranca-metodo",
+    "Aprofundar / Investigação": "/aprofundamento",
+    "Hipóteses Clínicas": "/hipoteses-clinicas",
+    "Interpretação": "/interpretacao",
+    "Frase & Timing": "/frase-timing",
+    "Corpo & Setting": "/setting-corpo",
+    "Insight & Potência": "/potencia-insight",
+  };
   const cats = [
     { cat: "Estrutura", items: [{ name: "Estágio de Mudança", active: true }, { name: "Estrutura do Atendimento" }, { name: "Abertura & Encerramento" }] },
     { cat: "Relação", items: [{ name: "Acolhimento" }, { name: "Segurança no Terapeuta" }, { name: "Segurança no Método" }] },
@@ -610,13 +624,14 @@ function CompetenciasSection() {
         <Reveal>
           <div className="text-center mb-12">
             <p className="font-dm font-semibold text-[11px] tracking-[.26em] text-[#C84B31] uppercase mb-4">AvaliAllos</p>
-            <h2 className="font-fraunces font-bold text-[#FDFBF7]" style={{ fontSize: "clamp(28px,4vw,44px)", letterSpacing: "-0.03em" }}>
+            <h2 className="font-fraunces font-bold text-[#FDFBF7] mb-3" style={{ fontSize: "clamp(28px,4vw,44px)", letterSpacing: "-0.03em" }}>
               Grade de <span className="italic text-[#C84B31]">Competências</span>
             </h2>
+            <p className="font-dm text-sm mx-auto" style={{ color: "rgba(253,251,247,0.38)", maxWidth: 460 }}>
+              Clique em qualquer competência para explorar em detalhes.
+            </p>
           </div>
         </Reveal>
-
-        {/* Bento-style: 4 columns, each category is a column */}
         <Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {cats.map(({ cat, items }) => {
@@ -628,15 +643,13 @@ function CompetenciasSection() {
                     <p className="font-dm font-semibold text-[10px] tracking-[.2em] uppercase" style={{ color: "rgba(253,251,247,0.3)" }}>{cat}</p>
                   </div>
                   {items.map((c) => (
-                    <motion.div
-                      key={c.name}
-                      className="rounded-xl p-4 relative cursor-pointer"
+                    <motion.a key={c.name} href={COMP_LINKS[c.name] || "#"}
+                      className="group rounded-xl p-4 relative block no-underline cursor-pointer"
                       style={{
                         background: c.active ? `${color}14` : "rgba(253,251,247,0.02)",
                         border: c.active ? `1px solid ${color}50` : "1px solid rgba(253,251,247,0.06)",
                       }}
-                      whileHover={{ y: -3, boxShadow: `0 8px 24px ${color}15` }}
-                    >
+                      whileHover={{ y: -3, boxShadow: `0 8px 24px ${color}15` }}>
                       {c.active && (
                         <span className="absolute top-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full font-dm text-[8px] font-bold tracking-wider uppercase"
                           style={{ background: `${color}20`, border: `1px solid ${color}40`, color }}>
@@ -644,14 +657,47 @@ function CompetenciasSection() {
                           Aqui
                         </span>
                       )}
-                      <p className="font-dm text-sm font-medium" style={{ color: c.active ? "rgba(253,251,247,0.9)" : "rgba(253,251,247,0.55)" }}>
+                      <p className="font-dm text-sm font-medium group-hover:text-[#FDFBF7] transition-colors" style={{ color: c.active ? "rgba(253,251,247,0.9)" : "rgba(253,251,247,0.55)" }}>
                         {c.name}
                       </p>
-                    </motion.div>
+                      <p className="font-dm text-[11px] mt-1 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color }}>Explorar →</p>
+                    </motion.a>
                   ))}
                 </div>
               );
             })}
+          </div>
+        </Reveal>
+        {/* Formação CTA */}
+        <Reveal delay={0.15}>
+          <div className="mt-14 rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6"
+            style={{ background: "rgba(253,251,247,0.03)", border: "1px solid rgba(253,251,247,0.06)" }}>
+            <div>
+              <p className="font-dm text-[11px] tracking-[.2em] uppercase mb-2" style={{ color: "rgba(253,251,247,0.35)" }}>Quer ir além?</p>
+              <p className="font-fraunces font-bold text-[#FDFBF7] text-lg">Conheça nossa formação contínua</p>
+              <p className="font-dm text-sm mt-1" style={{ color: "rgba(253,251,247,0.4)" }}>Supervisão, grupos práticos e desenvolvimento clínico estruturado.</p>
+            </div>
+            <motion.a href="/formacao"
+              className="flex-shrink-0 inline-flex items-center gap-2 font-dm font-semibold text-sm text-white rounded-full"
+              style={{ padding: "12px 28px", background: "#C84B31" }}
+              whileHover={{ scale: 1.04, boxShadow: "0 6px 20px rgba(200,75,49,.3)" }}
+              whileTap={{ scale: 0.97 }}>
+              Conhecer a formação
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </motion.a>
+          </div>
+        </Reveal>
+        {/* PBE reference */}
+        <Reveal delay={0.2}>
+          <div className="mt-5 flex items-center justify-center gap-3 py-4">
+            <div className="h-px w-8" style={{ background: "rgba(253,251,247,0.06)" }} />
+            <p className="font-dm text-[12px]" style={{ color: "rgba(253,251,247,0.3)" }}>
+              Quer entender a ciência por trás?{" "}
+              <a href="/pbe" className="transition-colors hover:text-[#C84B31]" style={{ color: "rgba(253,251,247,0.5)", textDecoration: "underline", textUnderlineOffset: "3px" }}>
+                Conheça a história da Prática Deliberada
+              </a>
+            </p>
+            <div className="h-px w-8" style={{ background: "rgba(253,251,247,0.06)" }} />
           </div>
         </Reveal>
       </div>
@@ -750,7 +796,7 @@ export default function EstagiosContent() {
             <p className="font-dm mx-auto mb-10" style={{ color: "rgba(253,251,247,0.45)", maxWidth: 560 }}>
               Reconhecer o estágio de mudança é o que permite ao terapeuta intervir sem precipitação nem omissão — transformando sensibilidade clínica em resultados reais.
             </p>
-            <motion.a href="https://wa.me/5531987577892" target="_blank" rel="noopener noreferrer"
+            <motion.a href="https://bit.ly/terapiasite" target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-3 font-dm font-semibold text-white bg-[#C84B31] rounded-full"
               style={{ padding: "17px 52px", fontSize: "15px" }}
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}
@@ -760,7 +806,7 @@ export default function EstagiosContent() {
               <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 7.5h12M8 2.5l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </motion.a>
             <p className="font-dm text-sm mt-12" style={{ color: "rgba(253,251,247,0.3)" }}>
-              R$200/mês · Rua Rio Negro, 1048, Barroca, BH – MG<br />suporte@allos.org.br · +55 31 98757-7892
+              Rua Rio Negro, 1048, Barroca, BH – MG<br />suporte@allos.org.br · +55 31 98757-7892
             </p>
           </Reveal>
         </div>

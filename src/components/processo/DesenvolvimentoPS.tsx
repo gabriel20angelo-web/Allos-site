@@ -20,7 +20,6 @@ export default function DesenvolvimentoPS() {
             <motion.p key={i} {...up(.1+i*.07)} className="font-dm text-[#5C5C5C] leading-relaxed mb-5 text-[15px]">{p}</motion.p>
           ))}
         </div>
-        {/* Quote box — exatamente como no original */}
         <motion.div initial={{opacity:0,x:22}} animate={inView?{opacity:1,x:0}:{}} transition={{delay:.22,duration:.8,ease:[.22,1,.36,1]}}>
           <div className="rounded-2xl overflow-hidden"
             style={{background:"#FDFBF7",borderLeft:"4px solid #C84B31",borderRadius:"0 16px 16px 0"}}>

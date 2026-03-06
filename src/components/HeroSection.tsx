@@ -16,7 +16,7 @@ function WordReveal({
 }) {
   const r = useReducedMotion();
   return (
-    <div className="flex flex-wrap justify-center gap-x-5 gap-y-0">
+    <div className="flex flex-wrap justify-center gap-x-3 sm:gap-x-5 gap-y-0">
       {words.map((w, i) => (
         <div
           key={w}
@@ -94,11 +94,11 @@ export default function HeroSection() {
         }}
       />
 
-      <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl mx-auto">
+      <div className="relative z-10 flex flex-col items-center text-center px-4 sm:px-6 max-w-4xl mx-auto">
         {/* Badge */}
-        <motion.div {...up(0.1)} className="mb-8">
+        <motion.div {...up(0.1)} className="mb-6 sm:mb-8">
           <div
-            className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full font-dm text-[13px] font-medium"
+            className="inline-flex items-center gap-2 sm:gap-2.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-dm text-[12px] sm:text-[13px] font-medium"
             style={{
               background: "rgba(14,165,160,.08)",
               border: "1px solid rgba(14,165,160,.18)",
@@ -118,8 +118,8 @@ export default function HeroSection() {
 
         {/* Title */}
         <div
-          className="mb-6 leading-none"
-          style={{ fontSize: "clamp(44px,8vw,88px)" }}
+          className="mb-5 sm:mb-6 leading-none"
+          style={{ fontSize: "clamp(32px,8vw,88px)" }}
         >
           <WordReveal words={["TRANSFORMANDO", "TALENTOS"]} delay={0.3} />
           <WordReveal words={["EM", "LEGADO"]} italic delay={0.52} />
@@ -128,8 +128,8 @@ export default function HeroSection() {
         {/* Subtitle */}
         <motion.p
           {...up(0.85)}
-          className="font-dm text-[#5C5C5C] max-w-[560px] leading-relaxed mb-10"
-          style={{ fontSize: "clamp(15px,1.8vw,18px)" }}
+          className="font-dm text-[#5C5C5C] max-w-[560px] leading-relaxed mb-8 sm:mb-10 px-2 sm:px-0"
+          style={{ fontSize: "clamp(14px,1.8vw,18px)" }}
         >
           Uma associação que integra aprendizado teórico e prático à prestação
           de serviços clínicos, formação profissional e projetos sociais de
@@ -137,25 +137,25 @@ export default function HeroSection() {
         </motion.p>
 
         {/* CTAs */}
-        <motion.div {...up(1.05)} className="flex flex-wrap gap-4 justify-center">
+        <motion.div {...up(1.05)} className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center w-full sm:w-auto px-2 sm:px-0">
           {/* Primary CTA — terracotta (conversion) */}
           <motion.a
-            href="#"
+            href="https://bit.ly/terapiasite" target="_blank" rel="noopener noreferrer"
             whileHover={{
               scale: 1.04,
               boxShadow: "0 8px 28px rgba(200,75,49,.3)",
             }}
             whileTap={{ scale: 0.97 }}
-            className="font-dm font-semibold text-white bg-[#C84B31] px-8 py-3.5 rounded-full hover:bg-[#A33D27] transition-colors"
+            className="font-dm font-semibold text-white bg-[#C84B31] px-8 py-3.5 rounded-full hover:bg-[#A33D27] transition-colors text-center"
           >
             Agendar sessão →
           </motion.a>
           {/* Secondary CTA — teal (navigation) */}
           <motion.a
-            href="#frentes"
+            href="/sobre"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="font-dm font-medium px-8 py-3.5 rounded-full transition-all"
+            className="font-dm font-medium px-8 py-3.5 rounded-full transition-all text-center"
             style={{
               color: "#0C6E6A",
               border: "1px solid rgba(14,165,160,.35)",
@@ -179,9 +179,9 @@ export default function HeroSection() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4, duration: 0.6 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
+        className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
       >
-        <p className="font-dm text-[10px] tracking-[.25em] text-[#5C5C5C] uppercase">
+        <p className="font-dm text-[10px] tracking-[.25em] text-[#5C5C5C] uppercase hidden sm:block">
           Role para explorar
         </p>
         <motion.div

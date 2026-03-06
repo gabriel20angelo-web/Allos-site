@@ -8,7 +8,6 @@ export default function IntroPS() {
   return (
     <section ref={ref} className="py-24 md:py-32" style={{background:"#F5F0E8"}}>
       <div className="max-w-[1200px] mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        {/* Decorativo circular */}
         <motion.div initial={{opacity:0,scale:.9}} animate={inView?{opacity:1,scale:1}:{}} transition={{duration:.9,ease:[.22,1,.36,1]}}
           className="hidden lg:flex items-center justify-center">
           <div className="relative w-72 h-72">
