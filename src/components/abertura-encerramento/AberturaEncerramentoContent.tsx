@@ -1289,7 +1289,7 @@ export default function AberturaEncerramentoContent() {
                 { name: "Corpo & Setting", href: "/setting-corpo" },
                 { name: "Insight & Potência", href: "/potencia-insight" },
               ]},
-            ] as const).map(({ cat, color, items }) => (
+            ]).map(({ cat, color, items }: any) => (
               <div key={cat}>
                 <div className="flex items-center gap-2.5 mt-8 mb-3">
                   <div className="w-2.5 h-2.5 rounded-sm" style={{ background: color }} />
@@ -1297,7 +1297,7 @@ export default function AberturaEncerramentoContent() {
                   <div className="flex-1 h-px" style={{ background: "rgba(253,251,247,0.05)" }} />
                 </div>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {items.map((c) => (
+                  {items.map((c: any) => (
                     <motion.a key={c.name} href={c.href}
                       className="group rounded-xl py-4 px-5 relative block no-underline"
                       style={{
