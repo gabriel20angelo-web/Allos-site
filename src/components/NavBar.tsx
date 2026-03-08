@@ -30,7 +30,7 @@ export default function NavBar() {
         }}>
         <div className="max-w-[1200px] mx-auto px-6 md:px-10 h-[68px] flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <Image src="/Icone_Allos_Verde.png" alt="Allos" width={32} height={32} />
+            <Image src="/Allos-site/Icone_Allos_Verde.png" alt="Allos" width={32} height={32} />
             <div>
               <span className="font-fraunces font-bold text-[17px] text-[#1A1A1A] tracking-wide">Allos</span>
               <span className="block font-dm text-[9px] tracking-[.28em] text-[#5C5C5C] uppercase -mt-0.5">Associação</span>

@@ -34,7 +34,7 @@ export default function RequisitosPS() {
           </div>
         </div>
         <motion.div initial={{opacity:0,scale:.96}} animate={inView?{opacity:1,scale:1}:{}} transition={{delay:.2,duration:.8,ease:[.22,1,.36,1]}}>
-          <Image src="/allos-roda.jpg" alt="Roda de conversa na Associação Allos" width={1024} height={768}
+          <Image src="/Allos-site/allos-roda.jpg" alt="Roda de conversa na Associação Allos" width={1024} height={768}
             className="w-full h-[420px] object-cover rounded-2xl" style={{objectPosition:"center 30%"}}/>
         </motion.div>
       </div>

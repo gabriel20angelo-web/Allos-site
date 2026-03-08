@@ -31,7 +31,7 @@ export default function EstruturaPS() {
           ))}
         </div>
         <motion.div initial={{opacity:0,x:22}} animate={inView?{opacity:1,x:0}:{}} transition={{delay:.2,duration:.8,ease:[.22,1,.36,1]}} className="sticky top-24">
-          <Image src="/allos-grupo.jpg" alt="Grupo formativo da Associação Allos" width={1280} height={960}
+          <Image src="/Allos-site/allos-grupo.jpg" alt="Grupo formativo da Associação Allos" width={1280} height={960}
             className="w-full h-[520px] object-cover rounded-2xl" style={{objectPosition:"center 40%"}}/>
         </motion.div>
       </div>
