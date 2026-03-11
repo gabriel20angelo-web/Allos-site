@@ -2,7 +2,6 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import basePath from "@/lib/basePath";
 
 /* ── constants ── */
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -1333,7 +1332,7 @@ export default function AberturaEncerramentoContent() {
                 <p className="font-fraunces font-bold text-[#FDFBF7] text-lg">Conheça nossa formação contínua</p>
                 <p className="font-dm text-sm mt-1" style={{ color: "rgba(253,251,247,0.4)" }}>Supervisão, grupos práticos e desenvolvimento clínico estruturado.</p>
               </div>
-              <motion.a href={`${basePath}/formacao`}
+              <motion.a href="/formacao"
                 className="flex-shrink-0 inline-flex items-center gap-2 font-dm font-semibold text-sm text-white rounded-full"
                 style={{ padding: "12px 28px", background: "#C84B31" }}
                 whileHover={{ scale: 1.04, boxShadow: "0 6px 20px rgba(200,75,49,.3)" }}
@@ -1350,7 +1349,7 @@ export default function AberturaEncerramentoContent() {
               <div className="h-px w-8" style={{ background: "rgba(253,251,247,0.06)" }} />
               <p className="font-dm text-[12px]" style={{ color: "rgba(253,251,247,0.3)" }}>
                 Quer entender a ciência por trás?{" "}
-                <a href={`${basePath}/pbe`} className="transition-colors hover:text-[#C84B31]" style={{ color: "rgba(253,251,247,0.5)", textDecoration: "underline", textUnderlineOffset: "3px" }}>
+                <a href="/pbe" className="transition-colors hover:text-[#C84B31]" style={{ color: "rgba(253,251,247,0.5)", textDecoration: "underline", textUnderlineOffset: "3px" }}>
                   Conheça a história da Prática Deliberada
                 </a>
               </p>
@@ -1415,7 +1414,7 @@ export default function AberturaEncerramentoContent() {
               segundo ao último.
             </p>
             <motion.a
-              href="https://bit.ly/terapiasite"
+              href="/avaliallos"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-3 font-dm font-semibold text-white bg-[#C84B31] rounded-full"
@@ -1437,7 +1436,7 @@ export default function AberturaEncerramentoContent() {
                 },
               }}
             >
-              Agendar Sessão
+              Agendar Avaliação
               <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
                 <path
                   d="M1 7.5h12M8 2.5l5 5-5 5"

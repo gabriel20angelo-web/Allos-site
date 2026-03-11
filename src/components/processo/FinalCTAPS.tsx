@@ -31,7 +31,7 @@ export default function FinalCTAPS() {
         </motion.p>
         <motion.div initial={{opacity:0,scale:.92}} animate={inView?{opacity:1,scale:1}:{}} transition={{delay:.32,duration:.5}}
           className="flex flex-col items-center gap-4">
-          <motion.a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=62W8GSaQhE6OGZKhl0TGCoMqe0RpMvpBjMqa_TRs1DRUOTEzVUxFWDNaOE5PMzFKRUQ3UFhRV0k0MS4u" target="_blank" rel="noopener noreferrer"
+          <motion.a href="/avaliallos"
             whileHover={{scale:1.05,boxShadow:"0 10px 40px rgba(200,75,49,.4)"}} whileTap={{scale:.97}}
             className="inline-flex items-center gap-2.5 font-dm font-semibold text-white bg-[#C84B31] rounded-full hover:bg-[#A33D27] transition-colors"
             style={{padding:"16px 48px",fontSize:"15px",boxShadow:"inset 0 1px 0 rgba(255,255,255,.12)"}}>
