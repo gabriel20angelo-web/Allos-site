@@ -113,24 +113,20 @@ body{background:#0A0A0F;color:rgba(253,251,247,0.9);font-family:'DM Sans',sans-s
 .g3{position:fixed;top:40%;left:-10%;width:30%;height:30%;background:radial-gradient(ellipse,rgba(139,92,246,0.02) 0%,transparent 65%);pointer-events:none;z-index:0}
 .w{max-width:740px;margin:0 auto;padding:56px 28px;position:relative;z-index:1}
 a{transition:opacity 0.2s}a:hover{opacity:0.8}
-@media print{@page{margin:0.5in 0.6in}.bg,.g2,.g3,.stars{display:none!important}}
 @media(max-width:600px){.w{padding:28px 16px}.rdr svg{width:280px!important;height:280px!important}.cg{grid-template-columns:1fr 1fr!important}.sl{grid-template-columns:repeat(3,1fr)!important}.mt{flex-direction:column}.mt>div{text-align:left!important}}
 ${light ? `
-body{background:#FDFBF7!important;color:#1A1A1A!important}
-.bg,.g2,.g3,.stars{display:none!important}
-.w *{color:#2A2A2A}
-.w h1,.w h2,.w h3,.w em,.w strong{color:#1A1A1A}
-.w a{color:#0C6E6A}
-.w em{color:#0C6E6A!important}
-.w p,.w span,.w div{border-color:#E5DFD3}
-svg text{fill:#555!important}
-svg polygon[fill="none"]{stroke:#ddd!important}
-svg line{stroke:#eee!important}
-svg circle[fill="url(#rg)"]{fill:rgba(14,165,160,0.04)!important}
-@page{margin:0.4in 0.5in}
-` : `@media print{@page{margin:0.5in}.bg,.g2,.g3,.stars{display:none!important}body{background:#0A0A0F!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}`}
+@page{margin:0;size:A4}
+*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+body{background:#0D1219!important;margin:0!important}
+.bg::before,.bg::after{display:block!important}
+.bg{position:absolute!important}
+.g2,.g3{position:absolute!important}
+.stars{display:none!important}
+.w{padding:40px 32px!important}
+a{color:#0EA5A0!important}
+` : `@media print{@page{margin:0.4in}.bg,.g2,.g3,.stars{display:none!important}}`}
 </style></head><body>
-${light ? '' : '<div class="bg"></div><div class="g2"></div><div class="g3"></div>'}
+<div class="bg"></div><div class="g2"></div><div class="g3"></div>
 ${light ? '' : `<div class="stars">${Array.from({length:60},()=>{const x=Math.random()*100;const y=Math.random()*100;const d=Math.random()*3;return `<span style="left:${x}%;top:${y}%;animation-delay:${d}s"></span>`}).join('')}</div>`}
 <div class="w">
 
@@ -283,10 +279,17 @@ export function generateReportPDF(a: ReportData) {
   const html = buildHTML(a, true)
   const printWin = window.open('', '_blank')
   if (!printWin) return
-  printWin.document.write(html)
+  
+  // Inject a print hint banner before the content
+  const bannerHTML = html.replace('<div class="w">', `
+    <div id="print-hint" style="position:fixed;top:0;left:0;right:0;z-index:999;padding:12px 20px;background:linear-gradient(135deg,#0EA5A0,#1BBAB0);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;text-align:center;display:flex;align-items:center;justify-content:center;gap:12px">
+      <span>Para salvar como PDF: <strong>Ctrl+P</strong> → Destino: <strong>Salvar como PDF</strong> → Marque <strong>"Gráficos de plano de fundo"</strong></span>
+      <button onclick="this.parentElement.remove();window.print()" style="padding:6px 16px;border-radius:8px;background:#fff;color:#0C6E6A;font-weight:700;border:none;cursor:pointer;font-size:12px">Salvar PDF</button>
+      <button onclick="this.parentElement.remove()" style="padding:6px 12px;border-radius:8px;background:rgba(255,255,255,0.2);color:#fff;border:none;cursor:pointer;font-size:12px">✕</button>
+    </div>
+    <div style="height:48px"></div>
+    <div class="w">`)
+  
+  printWin.document.write(bannerHTML)
   printWin.document.close()
-  // Wait for fonts to load then trigger print
-  printWin.onload = () => {
-    setTimeout(() => { printWin.print() }, 600)
-  }
 }

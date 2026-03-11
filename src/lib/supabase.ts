@@ -2,12 +2,10 @@ import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
-// Cliente público (usado no front-end)
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-// Cliente admin (usado APENAS em API routes do servidor)
 export function getSupabaseAdmin() {
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-  return createClient(supabaseUrl, serviceRoleKey)
+  return createClient(supabaseUrl, supabaseServiceKey)
 }
