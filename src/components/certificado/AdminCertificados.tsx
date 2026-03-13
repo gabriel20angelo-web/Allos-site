@@ -43,7 +43,21 @@ interface Condutor {
   observacoes: string | null
 }
 
-type Tab = 'dashboard' | 'condutores' | 'atividades' | 'envios' | 'formacao'
+type Tab = 'dashboard' | 'condutores' | 'atividades' | 'envios' | 'certificados' | 'formacao'
+
+interface HorasInfo {
+  totalHoras: number
+  horasRestantes: number
+  liberado: boolean
+  porAtividade: Record<string, { count: number; horas: number }>
+}
+
+interface PersonSubmissions {
+  nome: string
+  email: string
+  submissions: Submission[]
+  horasInfo: HorasInfo | null
+}
 type TimeFilter = 'month' | 'quarter' | 'semester' | 'year' | 'all'
 
 const TAB_LABELS: Record<Tab, string> = {
@@ -51,6 +65,7 @@ const TAB_LABELS: Record<Tab, string> = {
   condutores: 'Condutores',
   atividades: 'Atividades',
   envios: 'Envios',
+  certificados: 'Certificados',
   formacao: 'Formação',
 }
 
@@ -108,6 +123,12 @@ export default function AdminCertificados() {
   const [editingAtividade, setEditingAtividade] = useState<Atividade | null>(null)
   const [editAtividadeNome, setEditAtividadeNome] = useState('')
   const [editAtividadeHoras, setEditAtividadeHoras] = useState(2)
+
+  // Certificados tab state
+  const [certSearch, setCertSearch] = useState('')
+  const [certPerson, setCertPerson] = useState<PersonSubmissions | null>(null)
+  const [certLoading, setCertLoading] = useState(false)
+  const [certPreviewData, setCertPreviewData] = useState<{ nomeParticipante: string; atividade: string; data: string; cargaHoraria: number; cargaHorariaExtenso: string } | null>(null)
 
   // Import CSV state
   const [importing, setImporting] = useState(false)
@@ -446,6 +467,41 @@ export default function AdminCertificados() {
     }
   }
 
+  // ─── Certificados: search person & get hours ──────────────────
+  const certUniqueNames = useMemo(() => {
+    const map = new Map<string, { nome: string; email: string; count: number }>()
+    submissions.forEach(s => {
+      const key = s.nome_completo.toLowerCase().trim()
+      const existing = map.get(key)
+      if (existing) { existing.count++ } else { map.set(key, { nome: s.nome_completo, email: s.email, count: 1 }) }
+    })
+    return Array.from(map.values()).sort((a, b) => b.count - a.count)
+  }, [submissions])
+
+  const certFilteredNames = useMemo(() => {
+    if (!certSearch.trim()) return certUniqueNames
+    const q = certSearch.toLowerCase()
+    return certUniqueNames.filter(p => p.nome.toLowerCase().includes(q) || p.email.toLowerCase().includes(q))
+  }, [certUniqueNames, certSearch])
+
+  async function loadPersonCerts(nome: string) {
+    setCertLoading(true)
+    setCertPerson(null)
+    try {
+      const horasRes = await adminApi({ action: 'get_hours', nome })
+      const personSubs = submissions.filter(s => s.nome_completo.toLowerCase().trim() === nome.toLowerCase().trim())
+      const email = personSubs[0]?.email || ''
+      setCertPerson({ nome, email, submissions: personSubs, horasInfo: horasRes.error ? null : horasRes })
+    } catch { setCertPerson({ nome, email: '', submissions: [], horasInfo: null }) }
+    setCertLoading(false)
+  }
+
+  function horasExtenso(n: number): string {
+    const w: Record<number, string> = { 1:'uma', 2:'duas', 3:'três', 4:'quatro', 5:'cinco', 6:'seis', 7:'sete', 8:'oito', 9:'nove', 10:'dez',
+      12:'doze', 14:'quatorze', 15:'quinze', 16:'dezesseis', 18:'dezoito', 20:'vinte', 24:'vinte e quatro', 30:'trinta', 36:'trinta e seis', 40:'quarenta', 48:'quarenta e oito', 50:'cinquenta', 60:'sessenta' }
+    return w[n] || String(n)
+  }
+
   const uniqueAtividades = useMemo(() => Array.from(new Set(submissions.map(s => s.atividade_nome))).sort(), [submissions])
   const hasFilters = filterAtividade !== 'all' || filterDateFrom || filterDateTo
 
@@ -515,6 +571,28 @@ export default function AdminCertificados() {
                 <button onClick={() => setCertificatePreview(null)} style={{ color: 'rgba(253,251,247,0.4)' }}><X size={18} /></button>
               </div>
               <CertificateGenerator data={{ nomeParticipante: certificatePreview.nome_completo, atividade: certificatePreview.atividade_nome, data: certificatePreview.created_at.split('T')[0] }} />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Cert Preview from Certificados tab */}
+      <AnimatePresence>
+        {certPreviewData && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 flex items-center justify-center p-4"
+            style={{ backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
+            onClick={() => setCertPreviewData(null)}>
+            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              onClick={e => e.stopPropagation()} className="w-full max-w-3xl rounded-2xl p-6 space-y-4"
+              style={{ backgroundColor: '#1A1A1A', border: '1px solid rgba(255,255,255,0.08)', maxHeight: '90vh', overflowY: 'auto' }}>
+              <div className="flex items-center justify-between">
+                <h3 className="font-fraunces font-bold" style={{ color: 'rgba(253,251,247,0.9)' }}>
+                  Certificado — {certPreviewData.atividade} ({certPreviewData.cargaHoraria}h)
+                </h3>
+                <button onClick={() => setCertPreviewData(null)} style={{ color: 'rgba(253,251,247,0.4)' }}><X size={18} /></button>
+              </div>
+              <CertificateGenerator data={certPreviewData} />
             </motion.div>
           </motion.div>
         )}
@@ -941,6 +1019,165 @@ export default function AdminCertificados() {
                 ))}
                 {visibleSubmissions.length === 0 && <Empty message={hasFilters || searchTerm ? 'Nenhum resultado' : 'Nenhum envio'} />}
               </div>
+            </motion.div>
+          )}
+
+          {/* ─── Certificados por Pessoa ─────────────────────────── */}
+          {tab === 'certificados' && (
+            <motion.div key="certs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
+              {/* Search */}
+              <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl"
+                style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <Search size={14} style={{ color: 'rgba(253,251,247,0.3)' }} />
+                <input value={certSearch} onChange={e => { setCertSearch(e.target.value); setCertPerson(null) }}
+                  placeholder="Buscar por nome ou email..."
+                  className="flex-1 bg-transparent font-dm text-sm outline-none" style={{ color: 'rgba(253,251,247,0.8)' }} />
+                {certSearch && <button onClick={() => { setCertSearch(''); setCertPerson(null) }} style={{ color: 'rgba(253,251,247,0.3)' }}><X size={14} /></button>}
+              </div>
+
+              {/* Person detail view */}
+              {certPerson ? (
+                <div className="space-y-4">
+                  <button onClick={() => setCertPerson(null)} className="font-dm text-xs flex items-center gap-1" style={{ color: '#C84B31' }}>
+                    <ChevronRight size={12} className="rotate-180" /> Voltar à lista
+                  </button>
+
+                  {/* Person header */}
+                  <div className="rounded-xl p-5" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center font-fraunces font-bold text-lg"
+                        style={{ backgroundColor: 'rgba(200,75,49,0.1)', color: '#C84B31' }}>
+                        {certPerson.nome.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <h3 className="font-dm text-base font-bold" style={{ color: 'rgba(253,251,247,0.9)' }}>{certPerson.nome}</h3>
+                        {certPerson.email && <p className="font-dm text-xs" style={{ color: 'rgba(253,251,247,0.3)' }}>{certPerson.email}</p>}
+                      </div>
+                    </div>
+
+                    {certPerson.horasInfo && (
+                      <div className="space-y-3">
+                        {/* Progress bar */}
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="font-dm text-xs font-medium" style={{ color: 'rgba(253,251,247,0.5)' }}>
+                              {certPerson.horasInfo.totalHoras}h de 30h (ciclo atual)
+                            </span>
+                            <span className="font-dm text-xs font-bold" style={{ color: certPerson.horasInfo.liberado ? '#22c55e' : '#C84B31' }}>
+                              {certPerson.horasInfo.liberado ? 'Liberado!' : `Faltam ${certPerson.horasInfo.horasRestantes}h`}
+                            </span>
+                          </div>
+                          <div className="h-2.5 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}>
+                            <div className="h-full rounded-full transition-all" style={{
+                              width: `${Math.min(100, (certPerson.horasInfo.totalHoras / 30) * 100)}%`,
+                              backgroundColor: certPerson.horasInfo.liberado ? '#22c55e' : '#C84B31',
+                            }} />
+                          </div>
+                        </div>
+
+                        {/* Per activity breakdown */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {Object.entries(certPerson.horasInfo.porAtividade).map(([nome, info]) => {
+                            const at = atividades.find(a => a.nome.toLowerCase() === nome.toLowerCase())
+                            const ch = at?.carga_horaria || 2
+                            return (
+                              <div key={nome} className="flex items-center justify-between p-3 rounded-lg"
+                                style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                                <div className="min-w-0">
+                                  <span className="font-dm text-xs font-medium truncate block" style={{ color: 'rgba(253,251,247,0.7)' }}>{nome}</span>
+                                  <span className="font-dm text-[10px]" style={{ color: 'rgba(253,251,247,0.3)' }}>{info.count}x · {ch}h cada · {info.horas}h total</span>
+                                </div>
+                                <button onClick={() => setCertPreviewData({
+                                  nomeParticipante: certPerson.nome,
+                                  atividade: nome,
+                                  data: new Date().toISOString().split('T')[0],
+                                  cargaHoraria: info.horas,
+                                  cargaHorariaExtenso: horasExtenso(info.horas),
+                                })} className="flex-shrink-0 p-1.5 rounded-lg hover:bg-white/[0.05]" title="Gerar certificado"
+                                  style={{ color: '#C84B31' }}>
+                                  <Download size={14} />
+                                </button>
+                              </div>
+                            )
+                          })}
+                        </div>
+                        {Object.keys(certPerson.horasInfo.porAtividade).length === 0 && (
+                          <p className="font-dm text-xs text-center py-4" style={{ color: 'rgba(253,251,247,0.2)' }}>Nenhuma hora acumulada no ciclo atual</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Full submission history */}
+                  <div className="rounded-xl p-5" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <h4 className="font-dm text-sm font-medium mb-3" style={{ color: 'rgba(253,251,247,0.6)' }}>
+                      Histórico completo ({certPerson.submissions.length} registros)
+                    </h4>
+                    <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                      {certPerson.submissions.map(s => (
+                        <div key={s.id} className="flex items-center justify-between p-2.5 rounded-lg"
+                          style={{ backgroundColor: 'rgba(255,255,255,0.015)', border: '1px solid rgba(255,255,255,0.03)' }}>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-dm text-xs font-medium" style={{ color: 'rgba(253,251,247,0.7)' }}>{s.atividade_nome}</span>
+                              <span className="font-dm text-[10px] px-1.5 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(200,75,49,0.1)', color: '#C84B31' }}>
+                                {atividades.find(a => a.nome.toLowerCase() === s.atividade_nome.toLowerCase())?.carga_horaria || 2}h
+                              </span>
+                            </div>
+                            <span className="font-dm text-[10px]" style={{ color: 'rgba(253,251,247,0.25)' }}>
+                              {new Date(s.created_at).toLocaleDateString('pt-BR')} · Grupo: {s.nota_grupo} · Condutor: {s.nota_condutor}
+                            </span>
+                          </div>
+                          <button onClick={() => setCertPreviewData({
+                            nomeParticipante: s.nome_completo,
+                            atividade: s.atividade_nome,
+                            data: s.created_at.split('T')[0],
+                            cargaHoraria: atividades.find(a => a.nome.toLowerCase() === s.atividade_nome.toLowerCase())?.carga_horaria || 2,
+                            cargaHorariaExtenso: horasExtenso(atividades.find(a => a.nome.toLowerCase() === s.atividade_nome.toLowerCase())?.carga_horaria || 2),
+                          })} className="flex-shrink-0 p-1.5 rounded-lg hover:bg-white/[0.05]" title="Certificado individual"
+                            style={{ color: 'rgba(253,251,247,0.3)' }}>
+                            <Download size={13} />
+                          </button>
+                        </div>
+                      ))}
+                      {certPerson.submissions.length === 0 && (
+                        <p className="font-dm text-xs text-center py-4" style={{ color: 'rgba(253,251,247,0.2)' }}>Nenhum registro encontrado</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : certLoading ? (
+                <div className="py-16 text-center">
+                  <div className="w-6 h-6 rounded-full border-2 border-t-transparent mx-auto animate-spin" style={{ borderColor: 'rgba(200,75,49,0.3)', borderTopColor: 'transparent' }} />
+                </div>
+              ) : (
+                /* Person list */
+                <div className="space-y-1.5 max-h-[600px] overflow-y-auto">
+                  {certFilteredNames.map(p => (
+                    <button key={p.nome.toLowerCase()} onClick={() => loadPersonCerts(p.nome)}
+                      className="w-full flex items-center justify-between p-3 rounded-xl text-left transition-all hover:bg-white/[0.02]"
+                      style={{ border: '1px solid rgba(255,255,255,0.04)' }}>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center font-dm text-xs font-bold flex-shrink-0"
+                          style={{ backgroundColor: 'rgba(200,75,49,0.08)', color: '#C84B31' }}>
+                          {p.nome.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="min-w-0">
+                          <span className="font-dm text-sm truncate block" style={{ color: 'rgba(253,251,247,0.8)' }}>{p.nome}</span>
+                          <span className="font-dm text-[10px]" style={{ color: 'rgba(253,251,247,0.25)' }}>{p.email}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className="font-dm text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(200,75,49,0.08)', color: '#C84B31' }}>
+                          {p.count} registro{p.count !== 1 ? 's' : ''}
+                        </span>
+                        <ChevronRight size={14} style={{ color: 'rgba(253,251,247,0.15)' }} />
+                      </div>
+                    </button>
+                  ))}
+                  {certFilteredNames.length === 0 && <Empty message={certSearch ? 'Nenhum resultado' : 'Nenhum registro'} />}
+                </div>
+              )}
             </motion.div>
           )}
 
