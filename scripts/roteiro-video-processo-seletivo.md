@@ -19,7 +19,7 @@
 ---
 
 ### CENA 2 — PÁGINA DO PROCESSO SELETIVO (3s–8s)
-**Tela:** /processo-seletivo
+**Tela:** /processoseletivopsi
 **Ação:** Scroll suave pela hero
 - Mostra o título "Processo Seletivo Para Atuar em Nossa Clínica Escola"
 - Subtítulo aparece: "talentos da psicologia que desejam construir trajetória clínica"
@@ -55,7 +55,7 @@
 ---
 
 ### CENA 5 — CLIQUE NO CTA FINAL (20s–23s)
-**Tela:** Seção final da página /processo-seletivo
+**Tela:** Seção final da página /processoseletivopsi
 **Ação:** Scroll até "Pronto para começar sua jornada?"
 - Dedo clica no botão "Agendar minha avaliação →"
 - Transição para /avaliallos
@@ -127,7 +127,7 @@
 - "Não é sobre passar de primeira."
 - "É sobre evoluir."
 - Logo Allos
-- "Link na bio" ou "allos.org.br/processo-seletivo"
+- "Link na bio" ou "allos.org.br/processoseletivopsi"
 
 ---
 
@@ -150,7 +150,7 @@
 ## ASSETS NECESSÁRIOS
 
 1. **Gravação de tela** do site (celular ou emulador mobile):
-   - /processo-seletivo (scroll completo)
+   - /processoseletivopsi (scroll completo)
    - /avaliallos (preenchimento do form)
    - Relatório HTML (scroll)
 2. **Mock WhatsApp** — mensagem de confirmação
@@ -173,4 +173,4 @@
 >
 > Não é sobre passar de primeira. É sobre evoluir.
 >
-> Link: allos.org.br/processo-seletivo
+> Link: allos.org.br/processoseletivopsi

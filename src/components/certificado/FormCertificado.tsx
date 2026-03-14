@@ -732,7 +732,7 @@ export default function FormCertificado() {
                     </a>
 
                     <a
-                      href="/processo-seletivo"
+                      href="/processoseletivopsi"
                       className="w-full flex items-center justify-center gap-3 px-5 py-4 rounded-xl font-dm font-bold text-sm transition-all duration-300 hover:-translate-y-0.5"
                       style={{ background: 'rgba(200,75,49,0.12)', color: '#C84B31', border: '1px solid rgba(200,75,49,0.3)', boxShadow: '0 4px 20px rgba(200,75,49,0.1)' }}
                     >
