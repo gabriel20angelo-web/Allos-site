@@ -34,7 +34,7 @@ export default function PageName() {
 ```
 
 Key route groups:
-- Institutional: `/sobre`, `/clinica`, `/formacao`, `/parcerias`, `/faq`, `/documentos`, `/processo-seletivo`
+- Institutional: `/sobre`, `/clinica`, `/formacao`, `/parcerias`, `/faq`, `/documentos`, `/processoseletivopsi`
 - AvaliAllos didactic pages (training competencies): `/acolherser`, `/acolhimento`, `/abertura-encerramento`, `/aprofundamento`, `/pbe`, etc. — these reuse `DidaticTemplate`
 
 ### Components

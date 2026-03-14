@@ -197,7 +197,7 @@ export default function SobreContent() {
                 style={{ fontSize: "15px", color: "rgba(253,251,247,0.55)" }}>
                 Aqueles que não ingressam no processo seletivo têm acesso gratuito à formação, com supervisão em diversas modalidades e abordagens, metodologia centrada na prática e possibilidade de atendimento na Clínica Escola.
               </p>
-              <Link href="/processo-seletivo" className="inline-flex items-center gap-1.5 font-dm text-[13px] font-medium text-[#C84B31] hover:underline" style={{ textUnderlineOffset: "3px" }}>
+              <Link href="/processoseletivopsi" className="inline-flex items-center gap-1.5 font-dm text-[13px] font-medium text-[#C84B31] hover:underline" style={{ textUnderlineOffset: "3px" }}>
                 Saiba mais sobre o processo seletivo →
               </Link>
             </div>
