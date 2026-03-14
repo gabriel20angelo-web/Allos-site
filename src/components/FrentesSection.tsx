@@ -63,7 +63,7 @@ const cards = [
       </svg>
     ),
     btns: [
-      { t: "Quero me associar", solid: true, href: "/processo-seletivo" },
+      { t: "Quero me associar", solid: true, href: "/processoseletivopsi" },
     ],
   },
 ];

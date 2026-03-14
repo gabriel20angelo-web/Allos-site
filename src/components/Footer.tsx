@@ -38,7 +38,7 @@ export default function Footer() {
               <Link href="/faq" className="font-dm text-[rgba(253,251,247,.5)] text-sm hover:text-[#FDFBF7] transition-colors">FAQ</Link>
               <Link href="/sobre" className="font-dm text-[rgba(253,251,247,.5)] text-sm hover:text-[#FDFBF7] transition-colors">Sobre a Allos</Link>
               <Link href="/clinica" className="font-dm text-[rgba(253,251,247,.5)] text-sm hover:text-[#FDFBF7] transition-colors">Clínica Social</Link>
-              <Link href="/processo-seletivo" className="font-dm text-[rgba(253,251,247,.5)] text-sm hover:text-[#FDFBF7] transition-colors">Processo Seletivo</Link>
+              <Link href="/processoseletivopsi" className="font-dm text-[rgba(253,251,247,.5)] text-sm hover:text-[#FDFBF7] transition-colors">Processo Seletivo</Link>
             </nav>
           </div>
         </div>

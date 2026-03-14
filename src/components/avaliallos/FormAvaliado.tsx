@@ -109,7 +109,7 @@ export default function FormAvaliado() {
 
         {/* Links úteis */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="space-y-4">
-          <a href="/processo-seletivo" className="group block rounded-2xl p-5 transition-all hover:-translate-y-1" style={{ backgroundColor: 'rgba(253,251,247,0.03)', border: '1.5px solid rgba(253,251,247,0.08)', borderLeftWidth: '4px', borderLeftColor: '#0EA5A0' }}>
+          <a href="/processoseletivopsi" className="group block rounded-2xl p-5 transition-all hover:-translate-y-1" style={{ backgroundColor: 'rgba(253,251,247,0.03)', border: '1.5px solid rgba(253,251,247,0.08)', borderLeftWidth: '4px', borderLeftColor: '#0EA5A0' }}>
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: 'rgba(14,165,160,0.1)' }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0EA5A0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
