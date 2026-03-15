@@ -13,12 +13,12 @@ export async function GET(req: NextRequest) {
   let query = supabase
     .from('sales_templates')
     .select('*')
-    .order('stage')
-    .order('sort_order', { ascending: true })
 
   if (flow) {
     query = query.eq('flow', flow)
   }
+
+  query = query.order('stage').order('sort_order', { ascending: true })
 
   const { data, error } = await query
 
