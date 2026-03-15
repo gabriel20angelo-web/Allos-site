@@ -252,6 +252,97 @@ function ClinicaCTA() {
   );
 }
 
+function ServiceCards() {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+  const services = [
+    {
+      href: "/clinica/psicoterapia",
+      title: "Psicoterapia",
+      subtitle: "de verdade",
+      desc: "Terapeutas selecionados por competência, supervisão obrigatória e atendimento 100% online com valores acessíveis.",
+      cta: "Conhecer a psicoterapia",
+      color: "#2E9E8F",
+    },
+    {
+      href: "/clinica/avaliacao-neuropsicologica",
+      title: "Avaliação",
+      subtitle: "Neuropsicológica",
+      desc: "Avaliação com rigor técnico e atendimento humanizado. Diagnósticos precisos para orientar o melhor caminho de tratamento.",
+      cta: "Conhecer a avaliação",
+      color: "#C84B31",
+    },
+  ];
+  return (
+    <section ref={ref} className="relative py-20 px-6 md:px-10" style={{ background: "#1A1A1A" }}>
+      <div className="absolute inset-0 pointer-events-none opacity-[.025]" style={{ backgroundImage: GRAIN }} />
+      <div className="relative z-10 max-w-[1200px] mx-auto">
+        <motion.p initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+          className="font-dm leading-relaxed max-w-[680px] mb-14"
+          style={{ fontSize: "clamp(16px,1.8vw,19px)", color: "rgba(253,251,247,0.55)" }}>
+          A Associação Allos mantém um compromisso rigoroso com a excelência clínica, a ética profissional e o cuidado responsável em saúde mental, integrando prática supervisionada, diversidade teórica e compromisso social.
+        </motion.p>
+
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.15, duration: 0.6 }}
+          className="flex items-center gap-4 mb-12">
+          <div className="h-px flex-1 max-w-[64px]"
+            style={{ background: "linear-gradient(to right,transparent,rgba(200,75,49,0.5))" }} />
+          <p className="font-dm font-semibold text-xs tracking-widest text-[#C84B31] uppercase">Nossos Serviços</p>
+          <div className="h-px flex-1"
+            style={{ background: "linear-gradient(to right,rgba(200,75,49,0.5),transparent)" }} />
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {services.map((s, i) => (
+            <motion.div key={i}
+              initial={{ opacity: 0, y: 40 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.2 + i * 0.15, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}>
+              <Link href={s.href} className="block group">
+                <div className="relative rounded-2xl overflow-hidden p-10 md:p-12 transition-transform duration-300 group-hover:-translate-y-1"
+                  style={{
+                    background: "rgba(253,251,247,0.025)",
+                    border: `1px solid rgba(253,251,247,0.07)`,
+                    borderLeft: `3px solid ${s.color}`,
+                    minHeight: 280,
+                  }}>
+                  <div className="absolute top-4 right-6 font-fraunces font-bold pointer-events-none select-none"
+                    style={{ fontSize: "100px", color: `${s.color}10`, lineHeight: 1, zIndex: 0 }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </div>
+                  <div className="relative z-10">
+                    <h3 className="font-fraunces font-bold text-[#FDFBF7] leading-tight mb-1"
+                      style={{ fontSize: "clamp(24px,3vw,36px)" }}>
+                      {s.title}
+                    </h3>
+                    <h3 className="font-fraunces font-bold italic leading-tight mb-6"
+                      style={{ fontSize: "clamp(24px,3vw,36px)", color: s.color }}>
+                      {s.subtitle}
+                    </h3>
+                    <p className="font-dm leading-relaxed mb-8"
+                      style={{ fontSize: "15px", color: "rgba(253,251,247,0.55)", maxWidth: 420 }}>
+                      {s.desc}
+                    </p>
+                    <span className="inline-flex items-center gap-2 font-dm font-semibold text-sm transition-colors"
+                      style={{ color: s.color }}>
+                      {s.cta}
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                        <path d="M3 8H13M9 4L13 8L9 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function ClinicaContent() {
   const introRef = useRef(null);
   const introInView = useInView(introRef, { once: true, margin: "-40px" });
@@ -285,29 +376,7 @@ export default function ClinicaContent() {
   ];
   return (
     <>
-      <section ref={introRef} className="relative py-20 px-6 md:px-10" style={{ background: "#1A1A1A" }}>
-        <div className="absolute inset-0 pointer-events-none opacity-[.025]" style={{ backgroundImage: GRAIN }} />
-        <div className="relative z-10 max-w-[1200px] mx-auto">
-          <motion.p initial={{ opacity: 0, y: 24 }} animate={introInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-            className="font-dm leading-relaxed max-w-[680px] mb-14"
-            style={{ fontSize: "clamp(16px,1.8vw,19px)", color: "rgba(253,251,247,0.55)" }}>
-            A Associação Allos mantém um compromisso rigoroso com a excelência clínica, a ética profissional e o cuidado responsável em saúde mental, integrando prática supervisionada, diversidade teórica e compromisso social.
-          </motion.p>
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={introInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.25, duration: 0.6 }}
-            className="flex flex-wrap items-center gap-3 pt-8"
-            style={{ borderTop: "1px solid rgba(253,251,247,0.07)" }}>
-            {["Formação Supervisionada", "Atendimento Acessível", "Atuação Institucional"].map((p, i) => (
-              <div key={p} className="flex items-center gap-3">
-                {i > 0 && <div className="w-1 h-1 rounded-full bg-[#C84B31] opacity-60" />}
-                <span className="font-dm font-semibold text-xs tracking-widest uppercase"
-                  style={{ color: "rgba(253,251,247,0.35)" }}>{p}</span>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+      <ServiceCards />
       <section className="relative py-4 pb-16 px-6 md:px-10" style={{ background: "#1A1A1A" }}>
         <div className="absolute inset-0 pointer-events-none opacity-[.025]" style={{ backgroundImage: GRAIN }} />
         <div className="relative z-10 max-w-[1200px] mx-auto space-y-6">
