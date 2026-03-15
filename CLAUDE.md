@@ -38,13 +38,15 @@ Key route groups:
 - AvaliAllos didactic pages (training competencies): `/acolherser`, `/acolhimento`, `/abertura-encerramento`, `/aprofundamento`, `/pbe`, etc. — these reuse `DidaticTemplate` with a declarative `DidaticPageData` structure (14 content block types: paragraph, insight, cards, comparison, etc.)
 - AvaliAllos evaluation system: `/avaliallos` (public booking), `/avaliallos/admin` (admin panel), `/avaliallos/avaliador` (evaluator panel)
 - Certificate system: `/certificado`, `/admin-formacao`
+- Marketing/sales panel: `/painel` (dashboard), `/painel/vendas` (sales templates), `/painel/workspace` (workspace), `/painel/pagamentos` (payments via Stripe), `/painel/admin`
 
 ### API Routes
 
-Two API subsystems under `src/app/api/`:
+Three API subsystems under `src/app/api/`:
 
 - **`/api/avaliallos/`** — 13 endpoints: `auth`, `avaliacoes`, `avaliadores`, `avaliados`, `bookings`, `disponibilidade`, `disponibilidade-fixo`, `slots`, `slots-fixos`, `slots-form`, `mensagens`, `quadro`, `importar`
 - **`/api/certificados/`** — 4 endpoints: `auth`, `formacao`, `submissions`, `admin`
+- **`/api/painel/`** — Marketing/sales panel: `auth`, `campaigns`, `links`, `leads`, `analytics` (summary, by-campaign), `vendas/templates`, `pagamentos` (criar-link, assinaturas). DB schema in `setup/painel-tables.sql`
 
 ### Components
 
@@ -59,6 +61,7 @@ Two API subsystems under `src/app/api/`:
 - **Tailwind CSS** — Primary styling; custom theme with colors (cream, charcoal, terracotta accent, sage, teal) and fonts (Fraunces serif, DM Sans sans-serif)
 - **Supabase** — Backend for AvaliAllos evaluation and certificate systems (`src/lib/supabase.ts`)
 - **jsPDF** — Client-side PDF generation for certificates (dynamically imported, SSR disabled)
+- **Stripe** — Payment links and subscriptions for the marketing/sales panel (`/api/painel/pagamentos/`)
 - **Lucide React** — Icons
 
 ### Key Patterns
@@ -83,7 +86,7 @@ Requires `.env.local` (see `.env.local.example`):
 
 ### Data Layer
 
-Supabase is the single data store. API routes handle server-side operations; some client components also query Supabase directly. Key tables: `avaliadores`, `avaliados`, `slots_fixos`, `slots`, `bookings`, `avaliacoes`, `avaliador_disponibilidade`, `avaliador_disp_fixo`, `certificado_submissions`. Database schema and setup details are in `SETUP.md` and `supabase/schema.sql`.
+Supabase is the single data store. API routes handle server-side operations; some client components also query Supabase directly. Key tables: `avaliadores`, `avaliados`, `slots_fixos`, `slots`, `bookings`, `avaliacoes`, `avaliador_disponibilidade`, `avaliador_disp_fixo`, `certificado_submissions`. Database schema and setup details are in `SETUP.md` and `supabase/schema.sql`. Painel tables (`campaigns`, `links`, `clicks`, `sales_templates`, `leads` + views) are in `setup/painel-tables.sql`.
 
 ## Style Conventions
 
