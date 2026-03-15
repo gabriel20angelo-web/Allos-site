@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '@/lib/supabase'
-import { validatePainelAuth } from '@/lib/painel-auth'
+import { validatePainelAuth, getSafeSupabaseAdmin } from '@/lib/painel-auth'
 
 const ALLOWED_CHANNELS = ['Instagram', 'Facebook', 'Google Ads', 'Panfleto', 'Indicação', 'Email', 'LinkedIn', 'Outro']
 
@@ -9,7 +8,8 @@ export async function GET(req: NextRequest) {
   const authError = validatePainelAuth(req)
   if (authError) return authError
 
-  const supabase = getSupabaseAdmin()
+  const [supabase, dbError] = getSafeSupabaseAdmin()
+  if (dbError) return dbError
   const { data, error } = await supabase
     .from('campaign_stats')
     .select('*')
@@ -22,7 +22,8 @@ export async function POST(req: NextRequest) {
   const authError = validatePainelAuth(req)
   if (authError) return authError
 
-  const supabase = getSupabaseAdmin()
+  const [supabase, dbError] = getSafeSupabaseAdmin()
+  if (dbError) return dbError
   const { name, channel } = await req.json()
 
   if (!name || !name.trim()) {

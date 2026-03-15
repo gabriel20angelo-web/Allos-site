@@ -1,13 +1,13 @@
 export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '@/lib/supabase'
-import { validatePainelAuth } from '@/lib/painel-auth'
+import { validatePainelAuth, getSafeSupabaseAdmin } from '@/lib/painel-auth'
 
 export async function GET(req: NextRequest) {
   const authError = validatePainelAuth(req)
   if (authError) return authError
 
-  const supabase = getSupabaseAdmin()
+  const [supabase, dbError] = getSafeSupabaseAdmin()
+  if (dbError) return dbError
   const stage = req.nextUrl.searchParams.get('stage')
   const campaign_id = req.nextUrl.searchParams.get('campaign_id')
 
@@ -34,7 +34,8 @@ export async function POST(req: NextRequest) {
   const authError = validatePainelAuth(req)
   if (authError) return authError
 
-  const supabase = getSupabaseAdmin()
+  const [supabase, dbError] = getSafeSupabaseAdmin()
+  if (dbError) return dbError
   const { name, phone, campaign_id, notes, flow } = await req.json()
 
   if (!name || !name.trim()) {

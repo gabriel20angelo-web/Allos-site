@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '@/lib/supabase'
-import { validatePainelAuth } from '@/lib/painel-auth'
+import { validatePainelAuth, getSafeSupabaseAdmin } from '@/lib/painel-auth'
 
 export async function GET(
   req: NextRequest,
@@ -11,7 +10,8 @@ export async function GET(
   if (authError) return authError
 
   const { id } = await params
-  const supabase = getSupabaseAdmin()
+  const [supabase, dbError] = getSafeSupabaseAdmin()
+  if (dbError) return dbError
 
   const { data, error } = await supabase
     .from('links_with_stats')

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '@/lib/supabase'
-import { validatePainelAuth } from '@/lib/painel-auth'
+import { validatePainelAuth, getSafeSupabaseAdmin } from '@/lib/painel-auth'
 
 const ALLOWED_STAGES = ['novo', 'em_conversa', 'proposta_enviada', 'pagamento_enviado', 'fechado', 'perdido']
 
@@ -12,7 +11,8 @@ export async function PUT(
   if (authError) return authError
 
   const { id } = await params
-  const supabase = getSupabaseAdmin()
+  const [supabase, dbError] = getSafeSupabaseAdmin()
+  if (dbError) return dbError
   const body = await req.json()
   const { name, phone, campaign_id, stage, notes, flow } = body
 
@@ -50,7 +50,8 @@ export async function DELETE(
   if (authError) return authError
 
   const { id } = await params
-  const supabase = getSupabaseAdmin()
+  const [supabase, dbError] = getSafeSupabaseAdmin()
+  if (dbError) return dbError
 
   const { data, error } = await supabase
     .from('leads')

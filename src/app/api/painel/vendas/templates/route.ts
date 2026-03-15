@@ -1,13 +1,13 @@
 export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '@/lib/supabase'
-import { validatePainelAuth } from '@/lib/painel-auth'
+import { validatePainelAuth, getSafeSupabaseAdmin } from '@/lib/painel-auth'
 
 export async function GET(req: NextRequest) {
   const authError = validatePainelAuth(req)
   if (authError) return authError
 
-  const supabase = getSupabaseAdmin()
+  const [supabase, dbError] = getSafeSupabaseAdmin()
+  if (dbError) return dbError
   const flow = req.nextUrl.searchParams.get('flow')
 
   let query = supabase

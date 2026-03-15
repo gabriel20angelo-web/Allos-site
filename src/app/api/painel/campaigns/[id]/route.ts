@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '@/lib/supabase'
-import { validatePainelAuth } from '@/lib/painel-auth'
+import { validatePainelAuth, getSafeSupabaseAdmin } from '@/lib/painel-auth'
 
 const ALLOWED_CHANNELS = ['Instagram', 'Facebook', 'Google Ads', 'Panfleto', 'Indicação', 'Email', 'LinkedIn', 'Outro']
 
@@ -12,7 +11,8 @@ export async function PUT(
   if (authError) return authError
 
   const { id } = await params
-  const supabase = getSupabaseAdmin()
+  const [supabase, dbError] = getSafeSupabaseAdmin()
+  if (dbError) return dbError
   const body = await req.json()
   const { name, channel, active } = body
 
