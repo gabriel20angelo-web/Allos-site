@@ -5,7 +5,12 @@
       "Bash(npm run:*)",
       "Bash(npx next:*)",
       "Bash(npm install:*)",
-      "Bash(GITHUB_ACTIONS=true npm run:*)"
+      "Bash(GITHUB_ACTIONS=true npm run:*)",
+      "Bash(ls -1 /c/Users/Usuario/Documents/laboratorio-ensino/Allos-site/src/app/api/avaliallos/*/route.ts)",
+      "Bash(ls -la /c/Users/Usuario/Documents/laboratorio-ensino/Allos-site/src/components/ | grep -E \"\\\\.tsx$\")",
+      "Bash(cd \"C:\\\\Users\\\\Usuario\\\\Documents\\\\laboratorio-ensino\\\\Allos-site\" && NEXT_BUILD_TURBOPACK=false npx next build 2>&1 | tail -60)",
+      "Bash(cd \"C:\\\\Users\\\\Usuario\\\\Documents\\\\laboratorio-ensino\\\\Allos-site\" && node node_modules/.bin/next build 2>&1 | tail -30)",
+      "Bash(cd \"C:\\\\Users\\\\Usuario\\\\Documents\\\\laboratorio-ensino\\\\Allos-site\" && ls node_modules/.bin/next* 2>&1; ls node_modules/next/package.json 2>&1)"
     ]
   }
 }
