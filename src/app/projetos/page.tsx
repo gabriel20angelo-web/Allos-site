@@ -1,9 +1,11 @@
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
+import DarkHero from "@/components/DarkHero";
+import ProjetosGallery from "@/components/projetos/ProjetosGallery";
 
 export const metadata = {
   title: "Projetos — Associação Allos",
-  description: "Projetos da Associação Allos.",
+  description: "Projetos de impacto social em saúde mental da Associação Allos — programas para servidores públicos e comunidades vulneráveis.",
 };
 
 export default function ProjetosPage() {
@@ -11,15 +13,14 @@ export default function ProjetosPage() {
     <>
       <NavBar />
       <main id="main-content">
-        <section className="min-h-[80vh] flex flex-col items-center justify-center px-6 text-center" style={{ background: 'linear-gradient(180deg, #0B0C14 0%, #1A1A1A 100%)' }}>
-          <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>🚧</div>
-          <h1 className="font-fraunces text-4xl md:text-5xl font-bold mb-4" style={{ color: '#FDFBF7' }}>
-            Página em construção
-          </h1>
-          <p className="font-dm text-lg md:text-xl max-w-lg" style={{ color: 'rgba(253,251,247,0.5)' }}>
-            Estamos preparando algo especial. Volte em breve!
-          </p>
-        </section>
+        <DarkHero
+          titleLine1="Nossos"
+          titleLine2="Projetos"
+          titleLine2Italic={true}
+          subtitle="Iniciativas de impacto social em saúde mental, desenvolvidas em parceria com redes públicas e organizações comunitárias."
+          meta="Saúde Pública · Comunidade"
+        />
+        <ProjetosGallery />
       </main>
       <Footer />
     </>

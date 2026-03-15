@@ -46,8 +46,8 @@ export default function DarkHero({
       </motion.div>
 
       <div className="relative z-10 max-w-[1200px] mx-auto">
-        <div className="overflow-hidden mb-1">
-          <motion.h1 className="font-fraunces font-bold text-[#FDFBF7] leading-none"
+        <div className="overflow-hidden mb-[-0.1em]">
+          <motion.h1 className="font-fraunces font-bold text-[#FDFBF7] leading-none pb-[0.15em]"
             style={{ fontSize: "clamp(44px,7.5vw,88px)" }}
             initial={{ clipPath: "inset(0 100% 0 0)", opacity: 0 }}
             animate={{ clipPath: "inset(0 0% 0 0)", opacity: 1 }}
@@ -57,7 +57,7 @@ export default function DarkHero({
         </div>
         <div className="overflow-hidden mb-10">
           <motion.h1
-            className={`font-fraunces font-bold leading-none ${titleLine2Italic ? "italic text-[#2E9E8F]" : "text-[#FDFBF7]"}`}
+            className={`font-fraunces font-bold leading-none pb-[0.15em] ${titleLine2Italic ? "italic text-[#2E9E8F]" : "text-[#FDFBF7]"}`}
             style={{ fontSize: "clamp(44px,7.5vw,88px)" }}
             initial={{ clipPath: "inset(0 100% 0 0)", opacity: 0 }}
             animate={{ clipPath: "inset(0 0% 0 0)", opacity: 1 }}

@@ -23,13 +23,13 @@ function WordReveal({
           key={w}
           style={{
             overflow: "hidden",
-            paddingBottom: ".1em",
-            marginBottom: "-.1em",
+            paddingBottom: ".15em",
+            marginBottom: "-.2em",
           }}
         >
           <motion.span
             className={`block font-fraunces font-bold ${italic ? "italic" : ""}`}
-            style={{ color: italic ? "#2E9E8F" : "#1A1A1A" }}
+            style={{ color: italic ? "#2E9E8F" : "#1A1A1A", paddingBottom: ".15em" }}
             initial={
               r
                 ? { opacity: 0 }
