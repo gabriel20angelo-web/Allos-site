@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '@/lib/supabase'
-import { validatePainelAuth } from '@/lib/painel-auth'
+import { validatePainelAuth, getSafeSupabaseAdmin } from '@/lib/painel-auth'
 
 export async function PUT(
   req: NextRequest,
@@ -10,7 +9,8 @@ export async function PUT(
   if (authError) return authError
 
   const { id } = await params
-  const supabase = getSupabaseAdmin()
+  const [supabase, dbError] = getSafeSupabaseAdmin()
+  if (dbError) return dbError
   const body = await req.json()
   const { title, body: templateBody } = body
 

@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getSupabaseAdmin } from '@/lib/supabase'
+import { SupabaseClient } from '@supabase/supabase-js'
 
 const COOKIE_NAME = 'painel_token'
 
@@ -33,6 +35,21 @@ export function painelAuthCookieHeader(password: string): string {
     parts.push('Secure')
   }
   return parts.join('; ')
+}
+
+/**
+ * Safely get the Supabase admin client.
+ * Returns [client, null] on success or [null, NextResponse] on failure.
+ */
+export function getSafeSupabaseAdmin(): [SupabaseClient, null] | [null, NextResponse] {
+  try {
+    return [getSupabaseAdmin(), null]
+  } catch {
+    return [null, NextResponse.json(
+      { error: 'Banco de dados não configurado. Verifique NEXT_PUBLIC_SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY no .env.local' },
+      { status: 503 }
+    )]
+  }
 }
 
 /**

@@ -5,7 +5,7 @@ import ClinicaContent from "@/components/clinica/ClinicaContent";
 
 export const metadata = {
   title: "Clínica da Associação Allos",
-  description: "Excelência clínica, formação supervisionada e atendimento psicológico acessível e responsável.",
+  description: "Psicoterapia acessível e avaliação neuropsicológica com rigor técnico. Excelência clínica, formação supervisionada e compromisso social.",
 };
 
 export default function ClinicaPage() {
@@ -19,7 +19,6 @@ export default function ClinicaPage() {
           titleLine2Italic={true}
           subtitle="Excelência clínica, formação supervisionada e atendimento psicológico acessível — integrando prática rigorosa, diversidade teórica e compromisso social."
           meta="Belo Horizonte · Todo o Brasil"
-          cta={{ href: "https://bit.ly/terapiasite", label: "Agendar Sessão" }}
         />
         <ClinicaContent />
       </main>

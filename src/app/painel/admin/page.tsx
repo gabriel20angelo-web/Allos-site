@@ -251,7 +251,7 @@ export default function AdminPage() {
   return (
     <div className="font-dm min-h-screen" style={{ background: '#FDFBF7' }}>
       {/* Tabs */}
-      <div className="flex border-b-2 bg-white px-4" style={{ borderColor: '#E8E4DF' }}>
+      <div className="flex border-b-2 bg-white px-4" style={{ borderColor: '#E5DFD3' }}>
         {(['links', 'campanhas'] as const).map(t => (
           <button
             key={t}
@@ -296,7 +296,7 @@ export default function AdminPage() {
                   <tr><td colSpan={6} className="text-center py-8 text-sm" style={{ color: '#777' }}>Nenhum link criado. Clique em &quot;+ Novo link&quot;.</td></tr>
                 ) : links.map(l => (
                   <tr key={l.id} className="hover:bg-gray-50">
-                    <td className="px-3 py-2.5 border-b" style={{ borderColor: '#E8E4DF' }}>
+                    <td className="px-3 py-2.5 border-b" style={{ borderColor: '#E5DFD3' }}>
                       <span
                         onClick={() => copyLink(l.slug)}
                         className="inline-flex items-center gap-1 px-2 py-1 rounded-md font-mono text-xs cursor-pointer hover:opacity-80"
@@ -306,24 +306,24 @@ export default function AdminPage() {
                         &#128203; {BASE}/{l.slug}
                       </span>
                     </td>
-                    <td className="px-3 py-2.5 border-b" style={{ borderColor: '#E8E4DF' }}>
+                    <td className="px-3 py-2.5 border-b" style={{ borderColor: '#E5DFD3' }}>
                       <span className={`inline-block px-2 py-0.5 rounded-xl text-xs font-semibold ${channelBadgeClasses(l.campaign_channel)}`}>
                         {l.campaign_channel || '-'}
                       </span>
                       <br />
                       <small className="text-xs" style={{ color: '#777' }}>{l.campaign_name || '-'}</small>
                     </td>
-                    <td className="px-3 py-2.5 border-b text-sm" style={{ borderColor: '#E8E4DF' }}>{l.description || '-'}</td>
-                    <td className="px-3 py-2.5 border-b text-sm" style={{ borderColor: '#E8E4DF' }}>
+                    <td className="px-3 py-2.5 border-b text-sm" style={{ borderColor: '#E5DFD3' }}>{l.description || '-'}</td>
+                    <td className="px-3 py-2.5 border-b text-sm" style={{ borderColor: '#E5DFD3' }}>
                       <strong>{l.total_clicks}</strong>
                       {l.last_click && <><br /><small style={{ color: '#777' }}>{fmtDate(l.last_click)}</small></>}
                     </td>
-                    <td className="px-3 py-2.5 border-b" style={{ borderColor: '#E8E4DF' }}>
+                    <td className="px-3 py-2.5 border-b" style={{ borderColor: '#E5DFD3' }}>
                       <span className={`inline-block px-2 py-0.5 rounded-xl text-xs font-semibold ${isActive(l.active) ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                         {isActive(l.active) ? 'Ativo' : 'Inativo'}
                       </span>
                     </td>
-                    <td className="px-3 py-2.5 border-b whitespace-nowrap" style={{ borderColor: '#E8E4DF' }}>
+                    <td className="px-3 py-2.5 border-b whitespace-nowrap" style={{ borderColor: '#E5DFD3' }}>
                       <button onClick={() => showDetail(l.id)} className="p-1 rounded-md hover:bg-teal-50 text-gray-400 hover:text-teal-600" title="Detalhes">&#128269;</button>
                       <button onClick={() => openLinkModal(l)} className="p-1 rounded-md hover:bg-teal-50 text-gray-400 hover:text-teal-600" title="Editar">&#9998;</button>
                       {isActive(l.active) && (
@@ -352,7 +352,7 @@ export default function AdminPage() {
                   className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-colors ${period === p.k ? 'text-white' : 'bg-white'}`}
                   style={{
                     background: period === p.k ? '#2E9E8F' : undefined,
-                    borderColor: period === p.k ? '#2E9E8F' : '#E8E4DF',
+                    borderColor: period === p.k ? '#2E9E8F' : '#E5DFD3',
                     color: period === p.k ? '#fff' : undefined,
                   }}
                 >
@@ -428,16 +428,16 @@ export default function AdminPage() {
                 ) : campaigns.map(c => (
                   <React.Fragment key={c.id}>
                     <tr className="hover:bg-gray-50">
-                      <td className="px-3 py-2.5 border-b text-sm font-semibold" style={{ borderColor: '#E8E4DF' }}>{c.name}</td>
-                      <td className="px-3 py-2.5 border-b" style={{ borderColor: '#E8E4DF' }}>
+                      <td className="px-3 py-2.5 border-b text-sm font-semibold" style={{ borderColor: '#E5DFD3' }}>{c.name}</td>
+                      <td className="px-3 py-2.5 border-b" style={{ borderColor: '#E5DFD3' }}>
                         <span className={`inline-block px-2 py-0.5 rounded-xl text-xs font-semibold ${channelBadgeClasses(c.channel)}`}>{c.channel}</span>
                       </td>
-                      <td className="px-3 py-2.5 border-b text-sm max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap" style={{ borderColor: '#E8E4DF' }} title={c.strategy || ''}>
+                      <td className="px-3 py-2.5 border-b text-sm max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap" style={{ borderColor: '#E5DFD3' }} title={c.strategy || ''}>
                         {c.strategy ? c.strategy.substring(0, 80) : '-'}
                       </td>
-                      <td className="px-3 py-2.5 border-b text-sm" style={{ borderColor: '#E8E4DF' }}>{c.active_links}</td>
-                      <td className="px-3 py-2.5 border-b text-sm font-semibold" style={{ borderColor: '#E8E4DF' }}>{c.total_clicks}</td>
-                      <td className="px-3 py-2.5 border-b whitespace-nowrap" style={{ borderColor: '#E8E4DF' }}>
+                      <td className="px-3 py-2.5 border-b text-sm" style={{ borderColor: '#E5DFD3' }}>{c.active_links}</td>
+                      <td className="px-3 py-2.5 border-b text-sm font-semibold" style={{ borderColor: '#E5DFD3' }}>{c.total_clicks}</td>
+                      <td className="px-3 py-2.5 border-b whitespace-nowrap" style={{ borderColor: '#E5DFD3' }}>
                         <button onClick={() => toggleCampaignDetail(c.id)} className="p-1 rounded-md hover:bg-teal-50 text-gray-400 hover:text-teal-600" title="Ver links">
                           {expandedCamp[c.id] !== undefined ? '\u25B2' : '\u25BC'}
                         </button>
@@ -455,7 +455,7 @@ export default function AdminPage() {
                             <>
                               <div className="mb-3 text-sm"><strong>Estratégia:</strong> {c.strategy || 'Não definida'}</div>
                               {expandedCamp[c.id]!.map(l => (
-                                <div key={l.id} className="border rounded-xl p-4 mb-2" style={{ background: '#f9fafb', borderColor: '#E8E4DF' }}>
+                                <div key={l.id} className="border rounded-xl p-4 mb-2" style={{ background: '#f9fafb', borderColor: '#E5DFD3' }}>
                                   <div className="text-xs uppercase tracking-wide font-semibold mb-1" style={{ color: '#777' }}>Link</div>
                                   <span
                                     onClick={() => copyLink(l.slug)}
@@ -494,7 +494,7 @@ export default function AdminPage() {
       {linkModal && (
         <div className="fixed inset-0 z-[100] flex justify-center items-start pt-8 px-4 overflow-y-auto" style={{ background: 'rgba(0,0,0,0.45)' }} onClick={e => { if (e.target === e.currentTarget) setLinkModal(false) }}>
           <div className="bg-white rounded-xl w-full max-w-[520px] shadow-2xl animate-in fade-in slide-in-from-top-2">
-            <div className="flex justify-between items-center px-5 py-4 border-b" style={{ borderColor: '#E8E4DF' }}>
+            <div className="flex justify-between items-center px-5 py-4 border-b" style={{ borderColor: '#E5DFD3' }}>
               <h2 className="text-base font-semibold">{linkEditId ? 'Editar link' : 'Novo link'}</h2>
               <button onClick={() => setLinkModal(false)} className="text-gray-400 hover:text-gray-600 text-lg">&times;</button>
             </div>
@@ -507,7 +507,7 @@ export default function AdminPage() {
                   onChange={e => setFSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                   placeholder="ex: consulta-ig"
                   className="w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2"
-                  style={{ borderColor: '#E8E4DF', '--tw-ring-color': 'rgba(46,158,143,0.3)' } as React.CSSProperties}
+                  style={{ borderColor: '#E5DFD3', '--tw-ring-color': 'rgba(46,158,143,0.3)' } as React.CSSProperties}
                 />
                 <p className="text-xs mt-1" style={{ color: '#777' }}>Apenas letras minúsculas, números e hífen. Link: <strong>{fSlug ? BASE + '/' + fSlug : '...'}</strong></p>
               </div>
@@ -517,7 +517,7 @@ export default function AdminPage() {
                   value={fCampaignId}
                   onChange={e => setFCampaignId(e.target.value)}
                   className="w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2"
-                  style={{ borderColor: '#E8E4DF' }}
+                  style={{ borderColor: '#E5DFD3' }}
                 >
                   <option value="">Selecione...</option>
                   {campaigns.map(c => <option key={c.id} value={c.id}>{c.name} ({c.channel})</option>)}
@@ -531,7 +531,7 @@ export default function AdminPage() {
                   onChange={e => setFDesc(e.target.value)}
                   placeholder="ex: Link principal do Instagram"
                   className="w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2"
-                  style={{ borderColor: '#E8E4DF' }}
+                  style={{ borderColor: '#E5DFD3' }}
                 />
               </div>
               <div>
@@ -542,7 +542,7 @@ export default function AdminPage() {
                   rows={3}
                   placeholder="A mensagem que o lead vai enviar..."
                   className="w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 resize-y"
-                  style={{ borderColor: '#E8E4DF' }}
+                  style={{ borderColor: '#E5DFD3' }}
                 />
                 <p className="text-xs mt-1" style={{ color: '#777' }}>Preview — o lead vai enviar exatamente isso:</p>
                 <div className="mt-1 rounded-xl px-3 py-2 text-sm whitespace-pre-wrap break-words shadow-sm relative" style={{ background: '#dcf8c6' }}>
@@ -550,7 +550,7 @@ export default function AdminPage() {
                 </div>
               </div>
             </div>
-            <div className="flex justify-end gap-2 px-5 py-4 border-t" style={{ borderColor: '#E8E4DF' }}>
+            <div className="flex justify-end gap-2 px-5 py-4 border-t" style={{ borderColor: '#E5DFD3' }}>
               <button onClick={() => setLinkModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium" style={{ background: '#e0f5f1', color: '#1A7A6D' }}>Cancelar</button>
               <button onClick={saveLink} className="px-4 py-2 rounded-lg text-sm font-medium text-white" style={{ background: '#2E9E8F' }}>Salvar</button>
             </div>
@@ -562,28 +562,28 @@ export default function AdminPage() {
       {campaignModal && (
         <div className="fixed inset-0 z-[100] flex justify-center items-start pt-8 px-4 overflow-y-auto" style={{ background: 'rgba(0,0,0,0.45)' }} onClick={e => { if (e.target === e.currentTarget) setCampaignModal(false) }}>
           <div className="bg-white rounded-xl w-full max-w-[520px] shadow-2xl">
-            <div className="flex justify-between items-center px-5 py-4 border-b" style={{ borderColor: '#E8E4DF' }}>
+            <div className="flex justify-between items-center px-5 py-4 border-b" style={{ borderColor: '#E5DFD3' }}>
               <h2 className="text-base font-semibold">{campEditId ? 'Editar campanha' : 'Nova campanha'}</h2>
               <button onClick={() => setCampaignModal(false)} className="text-gray-400 hover:text-gray-600 text-lg">&times;</button>
             </div>
             <div className="p-5 space-y-4">
               <div>
                 <label className="block text-xs font-semibold mb-1">Nome da campanha</label>
-                <input type="text" value={fCName} onChange={e => setFCName(e.target.value)} placeholder="ex: Captação Instagram Março 2026" className="w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none" style={{ borderColor: '#E8E4DF' }} />
+                <input type="text" value={fCName} onChange={e => setFCName(e.target.value)} placeholder="ex: Captação Instagram Março 2026" className="w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none" style={{ borderColor: '#E5DFD3' }} />
               </div>
               <div>
                 <label className="block text-xs font-semibold mb-1">Canal</label>
-                <select value={fChannel} onChange={e => setFChannel(e.target.value)} className="w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none" style={{ borderColor: '#E8E4DF' }}>
+                <select value={fChannel} onChange={e => setFChannel(e.target.value)} className="w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none" style={{ borderColor: '#E5DFD3' }}>
                   <option value="">Selecione...</option>
                   {CHANNELS.map(ch => <option key={ch} value={ch}>{ch}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-xs font-semibold mb-1">Estratégia de divulgação</label>
-                <textarea value={fStrategy} onChange={e => setFStrategy(e.target.value)} rows={3} placeholder="Descreva a estratégia..." className="w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none resize-y" style={{ borderColor: '#E8E4DF' }} />
+                <textarea value={fStrategy} onChange={e => setFStrategy(e.target.value)} rows={3} placeholder="Descreva a estratégia..." className="w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none resize-y" style={{ borderColor: '#E5DFD3' }} />
               </div>
             </div>
-            <div className="flex justify-end gap-2 px-5 py-4 border-t" style={{ borderColor: '#E8E4DF' }}>
+            <div className="flex justify-end gap-2 px-5 py-4 border-t" style={{ borderColor: '#E5DFD3' }}>
               <button onClick={() => setCampaignModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium" style={{ background: '#e0f5f1', color: '#1A7A6D' }}>Cancelar</button>
               <button onClick={saveCampaign} className="px-4 py-2 rounded-lg text-sm font-medium text-white" style={{ background: '#2E9E8F' }}>Salvar</button>
             </div>
@@ -595,12 +595,12 @@ export default function AdminPage() {
       {detailModal && detailLink && (
         <div className="fixed inset-0 z-[100] flex justify-center items-start pt-8 px-4 overflow-y-auto" style={{ background: 'rgba(0,0,0,0.45)' }} onClick={e => { if (e.target === e.currentTarget) setDetailModal(false) }}>
           <div className="bg-white rounded-xl w-full max-w-[520px] shadow-2xl">
-            <div className="flex justify-between items-center px-5 py-4 border-b" style={{ borderColor: '#E8E4DF' }}>
+            <div className="flex justify-between items-center px-5 py-4 border-b" style={{ borderColor: '#E5DFD3' }}>
               <h2 className="text-base font-semibold">Detalhes do link</h2>
               <button onClick={() => setDetailModal(false)} className="text-gray-400 hover:text-gray-600 text-lg">&times;</button>
             </div>
             <div className="p-5">
-              <div className="border rounded-xl p-4" style={{ background: '#f9fafb', borderColor: '#E8E4DF' }}>
+              <div className="border rounded-xl p-4" style={{ background: '#f9fafb', borderColor: '#E5DFD3' }}>
                 {[
                   { label: 'Link', content: (
                     <span onClick={() => copyLink(detailLink.slug)} className="inline-flex items-center gap-1 px-2 py-1 rounded-md font-mono text-xs cursor-pointer hover:opacity-80" style={{ background: '#e0f5f1', color: '#1A7A6D' }}>
@@ -624,11 +624,11 @@ export default function AdminPage() {
                 ))}
               </div>
               <div className="grid grid-cols-2 gap-3 mt-4">
-                <div className="bg-white rounded-xl p-3 text-center shadow-sm border" style={{ borderColor: '#E8E4DF' }}>
+                <div className="bg-white rounded-xl p-3 text-center shadow-sm border" style={{ borderColor: '#E5DFD3' }}>
                   <div className="text-2xl font-bold" style={{ color: '#2E9E8F' }}>{detailLink.total_clicks}</div>
                   <div className="text-xs" style={{ color: '#777' }}>Cliques</div>
                 </div>
-                <div className="bg-white rounded-xl p-3 text-center shadow-sm border" style={{ borderColor: '#E8E4DF' }}>
+                <div className="bg-white rounded-xl p-3 text-center shadow-sm border" style={{ borderColor: '#E5DFD3' }}>
                   <div className="text-2xl font-bold" style={{ color: '#2E9E8F' }}>{detailLink.last_click ? fmtDate(detailLink.last_click) : '-'}</div>
                   <div className="text-xs" style={{ color: '#777' }}>Último clique</div>
                 </div>

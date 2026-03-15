@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '@/lib/supabase'
 import { SEED_TEMPLATES } from '@/lib/seed-templates'
-import { validatePainelAuth } from '@/lib/painel-auth'
+import { validatePainelAuth, getSafeSupabaseAdmin } from '@/lib/painel-auth'
 
 export async function POST(req: NextRequest) {
   const authError = validatePainelAuth(req)
   if (authError) return authError
 
-  const supabase = getSupabaseAdmin()
+  const [supabase, dbError] = getSafeSupabaseAdmin()
+  if (dbError) return dbError
 
   // Delete all existing templates
   const { error: deleteError } = await supabase

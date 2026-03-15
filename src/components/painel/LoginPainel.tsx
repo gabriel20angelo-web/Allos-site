@@ -44,7 +44,7 @@ export default function LoginPainel({ onSuccess }: LoginPainelProps) {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="relative z-10 w-full max-w-md">
         <div className="rounded-3xl p-8" style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', backdropFilter: 'blur(12px)' }}>
           <div className="flex justify-center mb-6">
-            <span className="font-dm text-xs font-bold tracking-widest uppercase px-4 py-1.5 rounded-full" style={{ backgroundColor: 'rgba(14,165,160,0.08)', color: '#0EA5A0', border: '1px solid rgba(14,165,160,0.15)' }}>Allos Link</span>
+            <span className="font-dm text-xs font-bold tracking-widest uppercase px-4 py-1.5 rounded-full" style={{ backgroundColor: 'rgba(14,165,160,0.08)', color: '#2E9E8F', border: '1px solid rgba(14,165,160,0.15)' }}>Allos Link</span>
           </div>
           <h1 className="font-fraunces text-2xl md:text-3xl text-center mb-2" style={{ color: 'rgba(253,251,247,0.95)' }}>Painel Administrativo</h1>
           <p className="font-dm text-sm text-center mb-8" style={{ color: 'rgba(253,251,247,0.35)' }}>Acesso restrito</p>
@@ -62,17 +62,17 @@ export default function LoginPainel({ onSuccess }: LoginPainelProps) {
             )}
             <button type="submit" disabled={loading}
               className="font-dm w-full py-3.5 rounded-xl text-sm font-bold tracking-wide transition-all duration-300 hover:-translate-y-0.5"
-              style={{ backgroundColor: loading ? 'rgba(253,251,247,0.1)' : '#0EA5A0', color: loading ? 'rgba(253,251,247,0.3)' : '#fff', boxShadow: loading ? 'none' : '0 4px 20px rgba(14,165,160,0.25)' }}>
+              style={{ backgroundColor: loading ? 'rgba(253,251,247,0.1)' : '#2E9E8F', color: loading ? 'rgba(253,251,247,0.3)' : '#fff', boxShadow: loading ? 'none' : '0 4px 20px rgba(14,165,160,0.25)' }}>
               {loading ? 'Verificando...' : 'Entrar'}
             </button>
           </form>
         </div>
         <div className="flex items-center justify-center mt-6 gap-2">
-          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#0EA5A0' }} />
+          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#2E9E8F' }} />
           <div className="w-8 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }} />
           <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: 'rgba(253,251,247,0.15)' }} />
           <div className="w-8 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }} />
-          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#0EA5A0' }} />
+          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#2E9E8F' }} />
         </div>
       </motion.div>
     </div>
