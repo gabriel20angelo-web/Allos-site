@@ -102,7 +102,7 @@ function statusBorderColor(status: string): string {
     past_due: '#E65100',
     canceled: '#999',
   }
-  return m[status] || '#E8E4DF'
+  return m[status] || '#E5DFD3'
 }
 
 // ── Component ──────────────────────────────────────────────────────
@@ -215,7 +215,7 @@ export default function PagamentosPage() {
     <div className="font-dm min-h-screen" style={{ background: '#FDFBF7' }}>
       <div className="w-full max-w-[960px] mx-auto px-6 py-6">
         {/* Tabs */}
-        <div className="flex gap-1 mb-6 border-b-2" style={{ borderColor: '#E8E4DF' }}>
+        <div className="flex gap-1 mb-6 border-b-2" style={{ borderColor: '#E5DFD3' }}>
           {[
             { key: 'gerar' as const, label: 'Gerar Link' },
             { key: 'assinaturas' as const, label: 'Assinaturas' },
@@ -236,7 +236,7 @@ export default function PagamentosPage() {
 
         {/* ═══ GERAR LINK TAB ═══ */}
         {tab === 'gerar' && (
-          <div className="max-w-[480px] mx-auto bg-white border rounded-2xl p-7 shadow-sm" style={{ borderColor: '#E8E4DF' }}>
+          <div className="max-w-[480px] mx-auto bg-white border rounded-2xl p-7 shadow-sm" style={{ borderColor: '#E5DFD3' }}>
             <div className="mb-5">
               <label className="block text-xs font-semibold mb-1.5" style={{ color: '#555' }}>Nome do cliente (opcional)</label>
               <input
@@ -412,7 +412,7 @@ export default function PagamentosPage() {
                   if (!isNeuro) metaParts.push(`Proxima cobranca: ${dataFmt(sub.periodo_atual_fim)}`)
 
                   return (
-                    <div key={sub.id} className="bg-white border rounded-2xl px-6 py-5 shadow-sm" style={{ borderColor: '#E8E4DF', borderLeftWidth: '4px', borderLeftColor: statusBorderColor(sub.status) }}>
+                    <div key={sub.id} className="bg-white border rounded-2xl px-6 py-5 shadow-sm" style={{ borderColor: '#E5DFD3', borderLeftWidth: '4px', borderLeftColor: statusBorderColor(sub.status) }}>
                       {/* Header */}
                       <div className="flex justify-between items-start gap-3 mb-3.5 flex-wrap">
                         <div>

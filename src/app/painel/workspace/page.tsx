@@ -31,6 +31,7 @@ interface Template {
   template_key: string
   title: string
   body: string
+  sort_order: number
   is_objection: boolean | number
 }
 
@@ -424,12 +425,21 @@ export default function WorkspacePage() {
     }
   }, [selectedLead])
 
-  // Scripts data for selected lead
+  // Scripts data for selected lead — grouped by stage dynamically
   const selectedFlow = selectedLead?.flow || 'terapia'
+  const allFlowTemplates = templates.filter(t => t.flow === selectedFlow && !Number(t.is_objection))
+  const groupedByStage = allFlowTemplates.reduce<Record<string, Template[]>>((acc, t) => {
+    if (!acc[t.stage]) acc[t.stage] = []
+    acc[t.stage].push(t)
+    return acc
+  }, {})
+  const stageOrder = Object.keys(groupedByStage).sort((a, b) => {
+    const minA = Math.min(...groupedByStage[a].map(t => t.sort_order ?? 0))
+    const minB = Math.min(...groupedByStage[b].map(t => t.sort_order ?? 0))
+    return minA - minB
+  })
+  // Highlight stages relevant to current kanban stage
   const stageScripts = selectedLead ? (STAGE_MAP[selectedFlow]?.[selectedLead.stage] || []) : []
-  const relevantTemplates = templates.filter(
-    t => t.flow === selectedFlow && stageScripts.includes(t.stage) && !Number(t.is_objection)
-  )
   const flowObjections = templates.filter(
     t => t.flow === selectedFlow && Number(t.is_objection)
   )
@@ -440,7 +450,7 @@ export default function WorkspacePage() {
   return (
     <div className="font-dm flex flex-col flex-1 bg-[#FDFBF7]" style={{ minHeight: 0 }}>
       {/* Vendedor input (top-right, desktop) */}
-      <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#E8E4DF]">
+      <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#E5DFD3]">
         <div className="flex gap-1.5 overflow-x-auto flex-1 py-0.5">
           {/* Quick nav pills */}
           {KANBAN_STAGES.map(stage => {
@@ -470,7 +480,7 @@ export default function WorkspacePage() {
             value={vendedorName}
             onChange={e => handleVendedorChange(e.target.value)}
             placeholder="Seu nome"
-            className="font-dm text-xs px-2 py-1 rounded-lg border border-[#E8E4DF] bg-white outline-none focus:border-[#2E9E8F] w-[120px]"
+            className="font-dm text-xs px-2 py-1 rounded-lg border border-[#E5DFD3] bg-white outline-none focus:border-[#2E9E8F] w-[120px]"
           />
         </div>
       </div>
@@ -490,7 +500,7 @@ export default function WorkspacePage() {
                 <div
                   key={stage}
                   ref={el => { columnRefs.current[stage] = el }}
-                  className="flex-1 min-w-[240px] flex flex-col bg-white rounded-xl border border-[#E8E4DF] overflow-hidden max-[900px]:flex-none max-[900px]:w-[85vw] max-[900px]:snap-start max-[900px]:rounded-none max-[900px]:min-h-[50vh]"
+                  className="flex-1 min-w-[240px] flex flex-col bg-white rounded-xl border border-[#E5DFD3] overflow-hidden max-[900px]:flex-none max-[900px]:w-[85vw] max-[900px]:snap-start max-[900px]:rounded-none max-[900px]:min-h-[50vh]"
                   onDragOver={handleDragOver}
                   onDrop={e => handleDrop(e, stage)}
                 >
@@ -527,7 +537,7 @@ export default function WorkspacePage() {
                           className={`relative bg-white rounded-lg border p-2.5 cursor-pointer transition-all hover:shadow-md ${
                             isSelected
                               ? 'border-[#2E9E8F] shadow-md ring-2 ring-[#2E9E8F]/20'
-                              : 'border-[#E8E4DF]'
+                              : 'border-[#E5DFD3]'
                           } ${draggedLeadId === lead.id ? 'opacity-50' : ''}`}
                         >
                           {/* X button for perdido */}
@@ -580,7 +590,7 @@ export default function WorkspacePage() {
                               {idx > 0 && (
                                 <button
                                   onClick={e => { e.stopPropagation(); moveLead(lead.id, KANBAN_STAGES[idx - 1]) }}
-                                  className="font-dm text-[10px] font-semibold px-2 py-1 rounded border border-[#E8E4DF] bg-white text-[#777] hover:bg-[#e0f5f1] hover:text-[#1A7A6D] min-h-[28px] transition-colors"
+                                  className="font-dm text-[10px] font-semibold px-2 py-1 rounded border border-[#E5DFD3] bg-white text-[#777] hover:bg-[#e0f5f1] hover:text-[#1A7A6D] min-h-[28px] transition-colors"
                                 >
                                   &larr; {STAGE_LABELS[KANBAN_STAGES[idx - 1]]}
                                 </button>
@@ -588,14 +598,14 @@ export default function WorkspacePage() {
                               {idx < KANBAN_STAGES.length - 1 && (
                                 <button
                                   onClick={e => { e.stopPropagation(); moveLead(lead.id, KANBAN_STAGES[idx + 1]) }}
-                                  className="font-dm text-[10px] font-semibold px-2 py-1 rounded border border-[#E8E4DF] bg-white text-[#777] hover:bg-[#e0f5f1] hover:text-[#1A7A6D] min-h-[28px] transition-colors"
+                                  className="font-dm text-[10px] font-semibold px-2 py-1 rounded border border-[#E5DFD3] bg-white text-[#777] hover:bg-[#e0f5f1] hover:text-[#1A7A6D] min-h-[28px] transition-colors"
                                 >
                                   {STAGE_LABELS[KANBAN_STAGES[idx + 1]]} &rarr;
                                 </button>
                               )}
                               <button
                                 onClick={e => { e.stopPropagation(); moveLead(lead.id, 'fechado') }}
-                                className="font-dm text-[10px] font-semibold px-2 py-1 rounded border border-[#E8E4DF] bg-white text-[#777] hover:bg-[#e0f5f1] hover:text-[#1A7A6D] min-h-[28px] transition-colors"
+                                className="font-dm text-[10px] font-semibold px-2 py-1 rounded border border-[#E5DFD3] bg-white text-[#777] hover:bg-[#e0f5f1] hover:text-[#1A7A6D] min-h-[28px] transition-colors"
                               >
                                 Fechado
                               </button>
@@ -640,13 +650,13 @@ export default function WorkspacePage() {
           <div className="px-3 pb-2">
             <button
               onClick={() => setFinalizadosOpen(!finalizadosOpen)}
-              className="w-full font-dm text-xs font-semibold text-[#777] py-2 rounded-lg border border-[#E8E4DF] bg-white hover:bg-gray-50 transition-colors"
+              className="w-full font-dm text-xs font-semibold text-[#777] py-2 rounded-lg border border-[#E5DFD3] bg-white hover:bg-gray-50 transition-colors"
             >
               Ver finalizados ({fechados.length} fechados, {perdidos.length} perdidos)
             </button>
 
             {finalizadosOpen && (
-              <div className="mt-2 bg-white rounded-xl border border-[#E8E4DF] overflow-hidden">
+              <div className="mt-2 bg-white rounded-xl border border-[#E5DFD3] overflow-hidden">
                 {fechados.length === 0 && perdidos.length === 0 ? (
                   <div className="text-center py-4 font-dm text-sm text-[#777]">
                     Nenhum lead finalizado.
@@ -655,7 +665,7 @@ export default function WorkspacePage() {
                   [...fechados, ...perdidos].map(l => (
                     <div
                       key={l.id}
-                      className="flex items-center justify-between px-3 py-2 border-b border-[#E8E4DF] last:border-b-0"
+                      className="flex items-center justify-between px-3 py-2 border-b border-[#E5DFD3] last:border-b-0"
                     >
                       <div className="flex items-center gap-2">
                         <span className="font-dm text-sm font-semibold">{l.name}</span>
@@ -686,7 +696,7 @@ export default function WorkspacePage() {
         {/* Scripts Panel */}
         <div
           ref={scriptsPanelRef}
-          className="w-[380px] border-l border-[#E8E4DF] bg-white overflow-y-auto flex-shrink-0 max-[900px]:w-full max-[900px]:border-l-0 max-[900px]:border-t max-[900px]:border-[#E8E4DF] max-[900px]:max-h-[50vh] max-[900px]:flex-none"
+          className="w-[380px] border-l border-[#E5DFD3] bg-white overflow-y-auto flex-shrink-0 max-[900px]:w-full max-[900px]:border-l-0 max-[900px]:border-t max-[900px]:border-[#E5DFD3] max-[900px]:max-h-[50vh] max-[900px]:flex-none"
         >
           {!selectedLead ? (
             <div className="flex items-center justify-center h-full min-h-[200px] font-dm text-sm text-[#777]">
@@ -733,7 +743,7 @@ export default function WorkspacePage() {
                 <select
                   value={selectedLead.stage}
                   onChange={e => changeLeadStage(selectedLead.id, e.target.value)}
-                  className="font-dm text-sm w-full px-2.5 py-1.5 rounded-lg border border-[#E8E4DF] bg-[#FDFBF7] outline-none focus:border-[#2E9E8F]"
+                  className="font-dm text-sm w-full px-2.5 py-1.5 rounded-lg border border-[#E5DFD3] bg-[#FDFBF7] outline-none focus:border-[#2E9E8F]"
                 >
                   {ALL_STAGES.map(s => (
                     <option key={s} value={s}>{STAGE_LABELS[s]}</option>
@@ -750,7 +760,7 @@ export default function WorkspacePage() {
                   key={selectedLead.id}
                   onBlur={() => saveNotes(selectedLead.id)}
                   placeholder="Adicionar notas..."
-                  className="font-dm text-sm w-full px-2.5 py-2 rounded-lg border border-[#E8E4DF] bg-[#FDFBF7] outline-none focus:border-[#2E9E8F] resize-y min-h-[60px]"
+                  className="font-dm text-sm w-full px-2.5 py-2 rounded-lg border border-[#E5DFD3] bg-[#FDFBF7] outline-none focus:border-[#2E9E8F] resize-y min-h-[60px]"
                 />
               </div>
 
@@ -759,7 +769,7 @@ export default function WorkspacePage() {
                 <h3 className="font-dm text-xs font-semibold text-[#777] uppercase tracking-wide mb-1.5">
                   Scripts ({selectedFlow === 'avaliacao_neuro' ? 'Avaliacao Neuro' : 'Terapia'})
                 </h3>
-                <div className="inline-flex rounded-lg border border-[#E8E4DF] overflow-hidden mb-3">
+                <div className="inline-flex rounded-lg border border-[#E5DFD3] overflow-hidden mb-3">
                   <button
                     onClick={() => changeLeadFlow(selectedLead.id, 'terapia')}
                     className={`font-dm text-xs font-semibold px-3 py-1.5 transition-colors ${
@@ -782,27 +792,40 @@ export default function WorkspacePage() {
                   </button>
                 </div>
 
-                {relevantTemplates.length > 0 ? (
-                  <div className="flex flex-col gap-2">
-                    {relevantTemplates.map(tpl => (
-                      <div key={tpl.id} className="border border-[#E8E4DF] rounded-lg overflow-hidden">
-                        <div className="flex items-center justify-between px-3 py-2 bg-[#F0FAF8]">
-                          <span className="font-dm text-sm font-semibold">{tpl.title}</span>
-                          <button
-                            onClick={() => copyScript(tpl.id, selectedLead.name)}
-                            className="font-dm text-xs font-semibold px-2.5 py-1 rounded-md bg-[#2E9E8F] text-white hover:opacity-90 transition-opacity"
-                          >
-                            Copiar
-                          </button>
+                {stageOrder.length > 0 ? (
+                  <div className="flex flex-col gap-3">
+                    {stageOrder.map(stage => {
+                      const isRelevant = stageScripts.includes(stage)
+                      const stageTpls = groupedByStage[stage]
+                      const stageLabel = stage.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+                      return (
+                        <div key={stage}>
+                          <div className="flex items-center gap-1.5 mb-1.5">
+                            <h4 className="font-fraunces text-xs font-semibold" style={{ color: isRelevant ? '#1A7A6D' : '#999' }}>{stageLabel}</h4>
+                            {isRelevant && <span className="w-1.5 h-1.5 rounded-full bg-[#2E9E8F]" />}
+                          </div>
+                          {stageTpls.map(tpl => (
+                            <div key={tpl.id} className={`border rounded-lg overflow-hidden mb-2 ${isRelevant ? 'border-[#C8E6E0]' : 'border-[#E5DFD3] opacity-60'}`}>
+                              <div className="flex items-center justify-between px-3 py-2" style={{ background: isRelevant ? '#F0FAF8' : '#FAFAF8' }}>
+                                <span className="font-dm text-sm font-semibold">{tpl.title}</span>
+                                <button
+                                  onClick={() => copyScript(tpl.id, selectedLead.name)}
+                                  className="font-dm text-xs font-semibold px-2.5 py-1 rounded-full bg-[#2E9E8F] text-white hover:opacity-90 transition-opacity"
+                                >
+                                  Copiar
+                                </button>
+                              </div>
+                              <div className="px-3 py-2 font-dm text-sm text-[#555] whitespace-pre-wrap break-words max-h-[120px] overflow-y-auto leading-relaxed">
+                                {replaceVars(tpl.body, selectedLead.name)}
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                        <div className="px-3 py-2 font-dm text-sm text-[#555] whitespace-pre-wrap break-words max-h-[120px] overflow-y-auto leading-relaxed">
-                          {replaceVars(tpl.body, selectedLead.name)}
-                        </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 ) : (
-                  <div className="font-dm text-sm text-[#777]">Nenhum script para esta etapa.</div>
+                  <div className="font-dm text-sm text-[#5C5C5C]">Nenhum script para este fluxo.</div>
                 )}
 
                 {/* Objections accordion */}
@@ -810,7 +833,7 @@ export default function WorkspacePage() {
                   <div className="mt-3">
                     <button
                       onClick={() => setObjectionsOpen(!objectionsOpen)}
-                      className="w-full flex items-center justify-between px-3 py-2 border border-[#E8E4DF] rounded-lg font-dm text-sm font-semibold text-[#2D2D2D] hover:bg-gray-50 transition-colors"
+                      className="w-full flex items-center justify-between px-3 py-2 border border-[#E5DFD3] rounded-lg font-dm text-sm font-semibold text-[#2D2D2D] hover:bg-gray-50 transition-colors"
                     >
                       <span>Objecoes ({flowObjections.length})</span>
                       <span className="text-xs">{objectionsOpen ? '\u25BC' : '\u25B6'}</span>
@@ -818,7 +841,7 @@ export default function WorkspacePage() {
                     {objectionsOpen && (
                       <div className="mt-2 flex flex-col gap-2">
                         {flowObjections.map(obj => (
-                          <div key={obj.id} className="border border-[#E8E4DF] rounded-lg overflow-hidden">
+                          <div key={obj.id} className="border border-[#E5DFD3] rounded-lg overflow-hidden">
                             <div className="flex items-center justify-between px-3 py-2 bg-[#F0FAF8]">
                               <span className="font-dm text-sm font-semibold">{obj.title}</span>
                               <button
@@ -852,7 +875,7 @@ export default function WorkspacePage() {
                         type="text"
                         value={pagNome}
                         onChange={e => setPagNome(e.target.value)}
-                        className="font-dm text-sm w-full px-2.5 py-1.5 rounded-lg border border-[#E8E4DF] bg-[#FDFBF7] outline-none focus:border-[#2E9E8F]"
+                        className="font-dm text-sm w-full px-2.5 py-1.5 rounded-lg border border-[#E5DFD3] bg-[#FDFBF7] outline-none focus:border-[#2E9E8F]"
                       />
                     </div>
                     <div>
@@ -863,7 +886,7 @@ export default function WorkspacePage() {
                         onChange={e => setPagValor(e.target.value)}
                         min="5"
                         max="5000"
-                        className="font-dm text-sm w-full px-2.5 py-1.5 rounded-lg border border-[#E8E4DF] bg-[#FDFBF7] outline-none focus:border-[#2E9E8F]"
+                        className="font-dm text-sm w-full px-2.5 py-1.5 rounded-lg border border-[#E5DFD3] bg-[#FDFBF7] outline-none focus:border-[#2E9E8F]"
                       />
                     </div>
                     <div>
@@ -871,7 +894,7 @@ export default function WorkspacePage() {
                       <select
                         value={pagParcelas}
                         onChange={e => setPagParcelas(e.target.value)}
-                        className="font-dm text-sm w-full px-2.5 py-1.5 rounded-lg border border-[#E8E4DF] bg-[#FDFBF7] outline-none focus:border-[#2E9E8F]"
+                        className="font-dm text-sm w-full px-2.5 py-1.5 rounded-lg border border-[#E5DFD3] bg-[#FDFBF7] outline-none focus:border-[#2E9E8F]"
                       >
                         <option value="1">1x (a vista)</option>
                         <option value="2">2x</option>
@@ -888,7 +911,7 @@ export default function WorkspacePage() {
                         onChange={e => setPagDesconto(e.target.value)}
                         min="0"
                         max="30"
-                        className="font-dm text-sm w-full px-2.5 py-1.5 rounded-lg border border-[#E8E4DF] bg-[#FDFBF7] outline-none focus:border-[#2E9E8F]"
+                        className="font-dm text-sm w-full px-2.5 py-1.5 rounded-lg border border-[#E5DFD3] bg-[#FDFBF7] outline-none focus:border-[#2E9E8F]"
                       />
                     </div>
                     <button
