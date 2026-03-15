@@ -46,7 +46,7 @@ export default function DarkHero({
       </motion.div>
 
       <div className="relative z-10 max-w-[1200px] mx-auto">
-        <div className="overflow-hidden mb-[-0.1em]">
+        <div className="overflow-hidden mb-[-0.15em]">
           <motion.h1 className="font-fraunces font-bold text-[#FDFBF7] leading-none pb-[0.15em]"
             style={{ fontSize: "clamp(44px,7.5vw,88px)" }}
             initial={{ clipPath: "inset(0 100% 0 0)", opacity: 0 }}
