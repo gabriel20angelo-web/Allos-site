@@ -20,7 +20,7 @@ export default function AvaliacaoNeuropsicologicaPage() {
           titleLine2Italic={true}
           subtitle="Avaliação neuropsicológica com rigor técnico e atendimento humanizado. Diagnósticos precisos para orientar o melhor caminho de tratamento."
           meta="Presencial e Online"
-          cta={{ href: "https://wa.me/5524998503894", label: "Agendar avaliação" }}
+          cta={{ href: `https://wa.me/5524998503894?text=${encodeURIComponent("Olá, gostaria de agendar uma avaliação neuropsicológica.")}`, label: "Agendar avaliação" }}
         />
         <AvaliacaoNeuroContent />
       </main>

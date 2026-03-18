@@ -402,33 +402,37 @@ function Investimento() {
           Investimento
         </p>
         <h2 className="font-fraunces font-bold leading-tight mb-12" style={{ fontSize: "clamp(28px,4.5vw,48px)", color: "#1A1A1A" }}>
-          Acessível e com facilidades de pagamento
+          Valor social acessível
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          {/* Price card */}
+          {/* Value proposition */}
           <div className="bg-[#F5F0E8] rounded-3xl p-12 text-center" style={{ border: "2px solid #1A7A6D" }}>
-            <p className="font-dm font-semibold text-xs tracking-[.2em] uppercase mb-2" style={{ color: "#1A7A6D" }}>
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: "rgba(26,122,109,0.1)" }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+              </svg>
+            </div>
+            <p className="font-fraunces font-bold text-2xl mb-4" style={{ color: "#1A7A6D" }}>
               Avaliação Neuropsicológica Completa
             </p>
-            <p className="font-fraunces font-bold leading-none mb-0" style={{ fontSize: "4rem", color: "#1A7A6D" }}>
-              R$ 1.000<span className="text-base font-normal" style={{ color: "#5C5C5C" }}>,00</span>
+            <p className="font-dm text-[15px] leading-relaxed mb-6" style={{ color: "#5C5C5C" }}>
+              Por sermos uma associação sem fins lucrativos, praticamos um <strong className="text-[#1A1A1A]">valor social acessível</strong>, significativamente abaixo do mercado, para que mais pessoas tenham acesso a uma avaliação de qualidade.
             </p>
-            <div className="w-[60px] h-0.5 mx-auto my-6" style={{ background: "#E0DDD5" }} />
-            <ul className="space-y-3">
-              <li className="flex items-center justify-center gap-2 font-dm text-[15px]" style={{ color: "#5C5C5C" }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A7A6D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-                PIX à vista: R$ 950 <span className="font-semibold text-sm" style={{ color: "#1A7A6D" }}>(5% de desconto)</span>
-              </li>
-              <li className="flex items-center justify-center gap-2 font-dm text-[15px]" style={{ color: "#5C5C5C" }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A7A6D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-                Até 4x de R$ 250 no cartão
-              </li>
-            </ul>
+            <motion.a
+              href={`https://wa.me/5524998503894?text=${encodeURIComponent("Olá, gostaria de agendar uma avaliação neuropsicológica.")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 font-dm font-semibold text-white rounded-full"
+              style={{ background: "#1A7A6D", padding: "14px 32px", fontSize: "15px", boxShadow: "0 4px 20px rgba(26,122,109,0.3)" }}
+              whileHover={{ y: -2, boxShadow: "0 8px 28px rgba(26,122,109,0.4)" }}
+              whileTap={{ scale: 0.97 }}
+            >
+              Agendar pelo WhatsApp
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </motion.a>
           </div>
 
           {/* Modalities */}
@@ -509,7 +513,7 @@ function CtaSection() {
         Entre em contato com a equipe do Núcleo de Avaliação Neuropsicológica da Allos. Estamos prontos para acolher você.
       </motion.p>
       <motion.a
-        href="https://wa.me/5524998503894"
+        href={`https://wa.me/5524998503894?text=${encodeURIComponent("Olá, gostaria de agendar uma avaliação neuropsicológica.")}`}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-3 font-dm font-semibold text-white rounded-full"

@@ -157,7 +157,7 @@ export default function PagamentosPage() {
         }),
       })
       const data = await resp.json()
-      if (!resp.ok || data.erro) throw new Error(data.erro || 'Erro desconhecido')
+      if (!resp.ok || data.error) throw new Error(data.error || 'Erro desconhecido')
       setResult(data)
     } catch (err: unknown) {
       setErro(err instanceof Error ? err.message : 'Erro desconhecido')
@@ -177,7 +177,7 @@ export default function PagamentosPage() {
     try {
       const resp = await fetch(`/api/painel/pagamentos/assinaturas?status=${filtroStatus}&tipo=${filtroTipo}`)
       const data = await resp.json()
-      if (!resp.ok || data.erro) throw new Error(data.erro || 'Erro desconhecido')
+      if (!resp.ok || data.error) throw new Error(data.error || 'Erro desconhecido')
       setSubs(data)
       setSubsLoaded(true)
     } catch (err: unknown) {
