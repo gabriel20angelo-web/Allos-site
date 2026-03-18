@@ -20,7 +20,6 @@ export async function GET(req: NextRequest) {
     // Build Stripe list params
     const listParams: Stripe.SubscriptionListParams = {
       limit: 100,
-      expand: ['data.items.data.price.product'],
     }
 
     if (statusFilter !== 'all') {
@@ -29,12 +28,26 @@ export async function GET(req: NextRequest) {
 
     const subscriptions = await stripe.subscriptions.list(listParams)
 
+    // Cache products to avoid repeated API calls
+    const productCache = new Map<string, string>()
+
     const results = await Promise.all(
       subscriptions.data.map(async (sub) => {
         // Get product name to determine type
         const item = sub.items.data[0]
-        const product = item?.price?.product as Stripe.Product | undefined
-        const productName = product?.name || ''
+        const productId = typeof item?.price?.product === 'string' ? item.price.product : ''
+        let productName = ''
+        if (productId) {
+          if (productCache.has(productId)) {
+            productName = productCache.get(productId)!
+          } else {
+            try {
+              const prod = await stripe.products.retrieve(productId)
+              productName = prod.name || ''
+              productCache.set(productId, productName)
+            } catch { /* ignore */ }
+          }
+        }
 
         const tipo = productName.toLowerCase().includes('neuro') ? 'neuro' : 'clinica'
 
@@ -56,22 +69,46 @@ export async function GET(req: NextRequest) {
           ? parseInt(sub.metadata.parcelas_total)
           : null
 
+        // Map invoices to the format expected by the frontend
+        const faturas = invoices.data.map((inv) => ({
+          numero: inv.number || null,
+          valor: inv.amount_due ?? 0,
+          data_pagamento: inv.status_transitions?.paid_at ?? null,
+          data_criacao: inv.created ?? null,
+          status: inv.status ?? 'draft',
+          url_pagamento: inv.hosted_invoice_url ?? null,
+          url_pdf: inv.invoice_pdf ?? null,
+        }))
+
         return {
           id: sub.id,
           status: sub.status,
           tipo,
           nome_cliente: sub.metadata?.nome_cliente || null,
           produto: productName,
-          valor_parcela: item?.price?.unit_amount
-            ? `R$ ${(item.price.unit_amount / 100).toFixed(2).replace('.', ',')}`
-            : null,
+          valor_parcela: item?.price?.unit_amount ?? 0,
+          desconto: sub.metadata?.desconto_percentual || '0',
           parcelas_total: totalParcelas,
           parcelas_pagas,
           parcelas_atrasadas,
-          created_at: new Date(sub.created * 1000).toISOString(),
-          current_period_end: (sub as unknown as { current_period_end: number }).current_period_end
-            ? new Date((sub as unknown as { current_period_end: number }).current_period_end * 1000).toISOString()
-            : null,
+          criado_em: sub.created,
+          cancela_em: sub.cancel_at ?? null,
+          periodo_atual_fim: (() => {
+            // Find the next billing date from the latest open invoice, or estimate from billing anchor
+            const openInv = invoices.data.find((inv) => inv.status === 'open')
+            if (openInv?.due_date) return openInv.due_date
+            // Estimate next period from billing cycle anchor
+            if (sub.billing_cycle_anchor) {
+              const anchor = sub.billing_cycle_anchor
+              const now = Math.floor(Date.now() / 1000)
+              const monthSec = 30 * 24 * 60 * 60
+              let next = anchor
+              while (next <= now) next += monthSec
+              return next
+            }
+            return null
+          })(),
+          faturas,
         }
       })
     )
@@ -80,8 +117,10 @@ export async function GET(req: NextRequest) {
     const filtered = results.filter(Boolean)
 
     return NextResponse.json(filtered)
-  } catch (err) {
-    console.error('Stripe error:', err)
-    return NextResponse.json({ error: 'Erro ao listar assinaturas.' }, { status: 500 })
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err)
+    const stack = err instanceof Error ? err.stack : ''
+    console.error('Stripe error:', message, stack)
+    return NextResponse.json({ error: `Erro ao listar assinaturas: ${message}` }, { status: 500 })
   }
 }
