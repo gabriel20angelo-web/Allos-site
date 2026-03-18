@@ -34,8 +34,9 @@ export default function PageName() {
 ```
 
 Key route groups:
-- Institutional: `/sobre`, `/clinica`, `/formacao`, `/parcerias`, `/faq`, `/documentos`, `/processoseletivopsi`
-- AvaliAllos didactic pages (training competencies): `/acolherser`, `/acolhimento`, `/abertura-encerramento`, `/aprofundamento`, `/pbe`, etc. — these reuse `DidaticTemplate` with a declarative `DidaticPageData` structure (14 content block types: paragraph, insight, cards, comparison, etc.)
+- Institutional: `/sobre`, `/formacao`, `/parcerias`, `/faq`, `/documentos`, `/processoseletivopsi`
+- Clínica (3 pages): `/clinica` (landing), `/clinica/psicoterapia`, `/clinica/avaliacao-neuropsicologica` — components in `src/components/clinica/`
+- AvaliAllos didactic pages (training competencies): `/acolherser`, `/acolhimento`, `/abertura-encerramento`, `/aprofundamento`, `/pbe`, etc. — these reuse `DidaticTemplate` with a declarative `DidaticPageData` structure
 - AvaliAllos evaluation system: `/avaliallos` (public booking), `/avaliallos/admin` (admin panel), `/avaliallos/avaliador` (evaluator panel)
 - Certificate system: `/certificado`, `/admin-formacao`
 - Marketing/sales panel: `/painel` (dashboard), `/painel/vendas` (sales templates), `/painel/workspace` (workspace), `/painel/pagamentos` (payments via Stripe), `/painel/admin`
@@ -84,9 +85,13 @@ Requires `.env.local` (see `.env.local.example`):
 - `SUPABASE_SERVICE_ROLE_KEY` — Server-side admin Supabase client
 - `NEXT_PUBLIC_AVALIADOR_PASSWORD` / `NEXT_PUBLIC_ADMIN_PASSWORD` — Protected evaluation routes
 
+### DidaticTemplate System
+
+`DidaticTemplate` (`src/components/DidaticTemplate.tsx`) renders competency training pages from a declarative `DidaticPageData` object. Each page defines sections containing typed content blocks: `paragraph`, `heading`, `subheading`, `example`, `quote`, `insight`, `bullets`, `numbered`, `comparison`, `cards`, `divider`, `warning`, `question`. To add a new didactic page, create a `page.tsx` that passes a `DidaticPageData` config to `DidaticTemplate`.
+
 ### Data Layer
 
-Supabase is the single data store. API routes handle server-side operations; some client components also query Supabase directly. Key tables: `avaliadores`, `avaliados`, `slots_fixos`, `slots`, `bookings`, `avaliacoes`, `avaliador_disponibilidade`, `avaliador_disp_fixo`, `certificado_submissions`. Database schema and setup details are in `SETUP.md` and `supabase/schema.sql`. Painel tables (`campaigns`, `links`, `clicks`, `sales_templates`, `leads` + views) are in `setup/painel-tables.sql`.
+Supabase is the single data store. API routes handle server-side operations; some client components also query Supabase directly. Key tables: `avaliadores`, `avaliados`, `slots_fixos`, `slots`, `bookings`, `avaliacoes`, `avaliador_disponibilidade`, `avaliador_disp_fixo`, `certificado_submissions`. Database schema and setup details are in `SETUP.md` and `supabase/schema.sql` (AvaliAllos), `CERTIFICADOS_SETUP.md` (certificates), and `setup/painel-tables.sql` (painel).
 
 ## Style Conventions
 
