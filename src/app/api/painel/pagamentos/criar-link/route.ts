@@ -54,6 +54,12 @@ export async function POST(req: NextRequest) {
 
       const paymentLink = await stripe.paymentLinks.create({
         line_items: [{ price: price.id, quantity: 1 }],
+        after_completion: {
+          type: 'redirect',
+          redirect: {
+            url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://allos.org.br'}/pagamento-sucesso`,
+          },
+        },
       })
 
       link = paymentLink.url
@@ -70,9 +76,10 @@ export async function POST(req: NextRequest) {
 
       const session = await stripe.checkout.sessions.create({
         mode: 'subscription',
+        locale: 'pt-BR',
         line_items: [{ price: price.id, quantity: 1 }],
-        success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://allos.com.br'}/pagamento-sucesso`,
-        cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://allos.com.br'}/pagamento-cancelado`,
+        success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://allos.org.br'}/pagamento-sucesso`,
+        cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://allos.org.br'}/pagamento-cancelado`,
         subscription_data: {
           metadata: {
             nome_cliente: nome_cliente.trim(),
