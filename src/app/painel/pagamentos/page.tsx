@@ -12,6 +12,22 @@ interface PaymentResult {
   }
 }
 
+interface SubscriptionResult {
+  url: string
+  proRataAmount: number
+  daysUntilAnchor: number
+  monthlyAmount: number
+}
+
+interface HistoryItem {
+  url: string
+  patientName: string
+  proRataAmount: number
+  monthlyAmount: number
+  daysUntilAnchor: number
+  createdAt: string
+}
+
 interface Invoice {
   numero: string | null
   valor: number
@@ -105,9 +121,31 @@ function statusBorderColor(status: string): string {
   return m[status] || '#E5DFD3'
 }
 
+// ── Pro-rata helpers ──────────────────────────────────────────────
+function getNextDay10(): Date {
+  const now = new Date()
+  const currentDay = now.getDate()
+  return currentDay >= 10
+    ? new Date(now.getFullYear(), now.getMonth() + 1, 10)
+    : new Date(now.getFullYear(), now.getMonth(), 10)
+}
+
+function calculateProRata(monthlyAmount: number): { amount: number; days: number } {
+  const now = new Date()
+  const nextDay10 = getNextDay10()
+  const diffMs = nextDay10.getTime() - now.getTime()
+  const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
+  const amount = (monthlyAmount / 30) * days
+  return { amount: Math.round(amount * 100) / 100, days }
+}
+
+function fmtReais(valor: number): string {
+  return 'R$ ' + valor.toFixed(2).replace('.', ',')
+}
+
 // ── Component ──────────────────────────────────────────────────────
 export default function PagamentosPage() {
-  const [tab, setTab] = useState<'gerar' | 'assinaturas'>('gerar')
+  const [tab, setTab] = useState<'gerar' | 'terapia' | 'assinaturas'>('gerar')
   const [toastMsg, setToastMsg] = useState('')
 
   // Gerar link state
@@ -118,6 +156,15 @@ export default function PagamentosPage() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<PaymentResult | null>(null)
   const [erro, setErro] = useState('')
+
+  // Terapia subscription state
+  const [tNome, setTNome] = useState('')
+  const [tEmail, setTEmail] = useState('')
+  const [tValor, setTValor] = useState(200)
+  const [tLoading, setTLoading] = useState(false)
+  const [tResult, setTResult] = useState<SubscriptionResult | null>(null)
+  const [tErro, setTErro] = useState('')
+  const [tHistory, setTHistory] = useState<HistoryItem[]>([])
 
   // Assinaturas state
   const [subs, setSubs] = useState<Subscription[]>([])
@@ -171,6 +218,49 @@ export default function PagamentosPage() {
     navigator.clipboard.writeText(result.link).then(() => toast('Link copiado!'))
   }
 
+  // ── Pro-rata preview ───────────────────────────────────────────────
+  const proRata = calculateProRata(tValor)
+  const nextDay10 = getNextDay10()
+
+  // ── Generate subscription ──────────────────────────────────────────
+  async function gerarAssinatura() {
+    setTErro('')
+    setTResult(null)
+    setTLoading(true)
+
+    try {
+      const resp = await fetch('/api/stripe/create-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          patientName: tNome.trim(),
+          patientEmail: tEmail.trim(),
+          monthlyAmount: tValor,
+        }),
+      })
+      const data = await resp.json()
+      if (!resp.ok || data.error) throw new Error(data.error || 'Erro desconhecido')
+      setTResult(data)
+      setTHistory(prev => [{
+        url: data.url,
+        patientName: tNome.trim(),
+        proRataAmount: data.proRataAmount,
+        monthlyAmount: data.monthlyAmount,
+        daysUntilAnchor: data.daysUntilAnchor,
+        createdAt: new Date().toLocaleString('pt-BR'),
+      }, ...prev])
+    } catch (err: unknown) {
+      setTErro(err instanceof Error ? err.message : 'Erro desconhecido')
+    } finally {
+      setTLoading(false)
+    }
+  }
+
+  function copiarLinkTerapia() {
+    if (!tResult) return
+    navigator.clipboard.writeText(tResult.url).then(() => toast('Link copiado!'))
+  }
+
   // ── Load subscriptions ──────────────────────────────────────────
   async function carregarAssinaturas() {
     setSubsLoading(true)
@@ -218,6 +308,7 @@ export default function PagamentosPage() {
         <div className="flex gap-1 mb-6 border-b-2" style={{ borderColor: '#E5DFD3' }}>
           {[
             { key: 'gerar' as const, label: 'Gerar Link' },
+            { key: 'terapia' as const, label: 'Assinatura Terapia' },
             { key: 'assinaturas' as const, label: 'Assinaturas' },
           ].map(t => (
             <button
@@ -333,6 +424,132 @@ export default function PagamentosPage() {
                   <strong style={{ color: '#2D2D2D' }}>Parcelas:</strong> {result.resumo.parcelas}x<br />
                   <strong style={{ color: '#2D2D2D' }}>Valor por parcela:</strong> {result.resumo.valor_parcela}<br />
                   <strong style={{ color: '#2D2D2D' }}>Desconto:</strong> {result.resumo.desconto}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ═══ ASSINATURA TERAPIA TAB ═══ */}
+        {tab === 'terapia' && (
+          <div className="max-w-[480px] mx-auto">
+            <div className="bg-white border rounded-2xl p-7 shadow-sm" style={{ borderColor: '#E5DFD3' }}>
+              <div className="mb-5">
+                <label className="block text-xs font-semibold mb-1.5" style={{ color: '#555' }}>Nome do paciente</label>
+                <input
+                  type="text"
+                  value={tNome}
+                  onChange={e => setTNome(e.target.value)}
+                  placeholder="Ex: Maria Silva"
+                  className="w-full px-3.5 py-3 text-sm border rounded-xl focus:outline-none"
+                  style={{ borderColor: '#DDD', background: '#FDFBF7' }}
+                />
+              </div>
+              <div className="mb-5">
+                <label className="block text-xs font-semibold mb-1.5" style={{ color: '#555' }}>Email do paciente</label>
+                <input
+                  type="email"
+                  value={tEmail}
+                  onChange={e => setTEmail(e.target.value)}
+                  placeholder="paciente@email.com"
+                  className="w-full px-3.5 py-3 text-sm border rounded-xl focus:outline-none"
+                  style={{ borderColor: '#DDD', background: '#FDFBF7' }}
+                />
+              </div>
+              <div className="mb-5">
+                <label className="block text-xs font-semibold mb-1.5" style={{ color: '#555' }}>Valor mensal (R$)</label>
+                <input
+                  type="number"
+                  value={tValor}
+                  onChange={e => setTValor(parseFloat(e.target.value) || 0)}
+                  min={50}
+                  max={2000}
+                  step={10}
+                  className="w-full px-3.5 py-3 text-sm border rounded-xl focus:outline-none"
+                  style={{ borderColor: '#DDD', background: '#FDFBF7' }}
+                />
+              </div>
+
+              {/* Pro-rata preview */}
+              <div className="rounded-xl px-4 py-4 mb-5 space-y-1.5" style={{ background: '#F0FAF8', border: '1px solid #C8E6E0' }}>
+                <div className="flex justify-between text-sm">
+                  <span style={{ color: '#555' }}>Pro-rata</span>
+                  <span className="font-semibold" style={{ color: '#1A7A6D' }}>
+                    {fmtReais(proRata.amount)} ({proRata.days} dias até dia 10)
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span style={{ color: '#555' }}>Recorrência</span>
+                  <span className="font-semibold" style={{ color: '#1A7A6D' }}>
+                    {fmtReais(tValor)}/mês a partir de {nextDay10.toLocaleDateString('pt-BR')}
+                  </span>
+                </div>
+              </div>
+
+              {/* Generate button */}
+              <button
+                onClick={gerarAssinatura}
+                disabled={tLoading || !tNome.trim() || !tEmail.trim()}
+                className="w-full py-3.5 rounded-xl text-sm font-semibold text-white transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
+                style={{ background: '#1A7A6D' }}
+              >
+                {tLoading ? (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Gerando...
+                  </span>
+                ) : 'Gerar Link de Pagamento'}
+              </button>
+
+              {/* Error */}
+              {tErro && (
+                <div className="mt-4 text-center text-sm font-medium text-red-600">{tErro}</div>
+              )}
+
+              {/* Result */}
+              {tResult && (
+                <div className="mt-6">
+                  <div className="rounded-xl px-4 py-3 text-xs break-all mb-3" style={{ background: '#F0FAF8', border: '1px solid #C8E6E0', color: '#1A7A6D' }}>
+                    {tResult.url}
+                  </div>
+                  <button
+                    onClick={copiarLinkTerapia}
+                    className="w-full py-3 rounded-xl text-sm font-semibold mb-4 transition-colors"
+                    style={{ background: '#E8F5F2', color: '#1A7A6D' }}
+                  >
+                    Copiar Link
+                  </button>
+                  <div className="text-sm leading-loose" style={{ color: '#555' }}>
+                    <strong style={{ color: '#2D2D2D' }}>1o pagamento (pro-rata):</strong> {fmtReais(tResult.proRataAmount)}<br />
+                    <strong style={{ color: '#2D2D2D' }}>Recorrência mensal:</strong> {fmtReais(tResult.monthlyAmount)}<br />
+                    <strong style={{ color: '#2D2D2D' }}>Próximo ciclo em:</strong> {tResult.daysUntilAnchor} dias
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* History */}
+            {tHistory.length > 0 && (
+              <div className="mt-6">
+                <h3 className="text-xs font-semibold mb-3" style={{ color: '#999' }}>Links gerados nesta sessão</h3>
+                <div className="flex flex-col gap-2">
+                  {tHistory.map((h, i) => (
+                    <div key={i} className="bg-white border rounded-xl px-4 py-3 flex items-center justify-between gap-3" style={{ borderColor: '#E5DFD3' }}>
+                      <div className="min-w-0">
+                        <div className="text-sm font-semibold truncate">{h.patientName}</div>
+                        <div className="text-xs" style={{ color: '#888' }}>
+                          Pro-rata {fmtReais(h.proRataAmount)} + {fmtReais(h.monthlyAmount)}/mês &middot; {h.createdAt}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => { navigator.clipboard.writeText(h.url).then(() => toast('Link copiado!')) }}
+                        className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors"
+                        style={{ background: '#E8F5F2', color: '#1A7A6D' }}
+                      >
+                        Copiar
+                      </button>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
