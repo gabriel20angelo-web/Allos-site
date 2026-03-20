@@ -36,10 +36,12 @@ export default function PageName() {
 Key route groups:
 - Institutional: `/sobre`, `/formacao`, `/parcerias`, `/faq`, `/documentos`, `/processoseletivopsi`
 - Clínica (3 pages): `/clinica` (landing), `/clinica/psicoterapia`, `/clinica/avaliacao-neuropsicologica` — components in `src/components/clinica/`
+- Projects: `/projetos` (main), `/projetos/prosam-bela-vista`, `/projetos/prosam-materlandia`, `/projetos/rama`
 - AvaliAllos didactic pages (training competencies): `/acolherser`, `/acolhimento`, `/abertura-encerramento`, `/aprofundamento`, `/pbe`, etc. — these reuse `DidaticTemplate` with a declarative `DidaticPageData` structure
 - AvaliAllos evaluation system: `/avaliallos` (public booking), `/avaliallos/admin` (admin panel), `/avaliallos/avaliador` (evaluator panel)
 - Certificate system: `/certificado`, `/admin-formacao`
 - Marketing/sales panel: `/painel` (dashboard), `/painel/vendas` (sales templates), `/painel/workspace` (workspace), `/painel/pagamentos` (payments via Stripe), `/painel/admin`
+- Stripe payment flow: `/pagamento-sucesso`, `/pagamento-cancelado`
 
 ### API Routes
 
@@ -63,12 +65,14 @@ Three API subsystems under `src/app/api/`:
 - **Supabase** — Backend for AvaliAllos evaluation and certificate systems (`src/lib/supabase.ts`)
 - **jsPDF** — Client-side PDF generation for certificates (dynamically imported, SSR disabled)
 - **Stripe** — Payment links and subscriptions for the marketing/sales panel (`/api/painel/pagamentos/`)
+- **date-fns** — Date formatting and manipulation
 - **Lucide React** — Icons
 
 ### Key Patterns
 
 - **Supabase client** (`src/lib/supabase.ts`): Uses a lazy Proxy pattern — client is only created on first property access. Has two clients: `supabase` (public anon key) and `getSupabaseAdmin()` (service role key)
-- **Auth**: Simple sessionStorage-based password check. Pages show `LoadingScreen` while checking, then `LoginForm` if unauthenticated. Passwords stored in env vars
+- **Auth (AvaliAllos/Certificados)**: Simple sessionStorage-based password check. Pages show `LoadingScreen` while checking, then `LoginForm` if unauthenticated. Passwords stored in env vars
+- **Auth (Painel)**: Cookie-based auth via `src/lib/painel-auth.ts`. API routes validate with `validatePainelAuth(req)`. Uses `PAINEL_PASSWORD` env var
 - **Dynamic imports**: Used for Three.js canvas and PDF generation (`next/dynamic` with `{ ssr: false }`) to avoid hydration issues
 - **Toast notifications**: Lightweight inline pattern (`useState` + `setTimeout`) — no external toast library
 
@@ -80,10 +84,14 @@ Three API subsystems under `src/app/api/`:
 
 ### Environment Variables
 
-Requires `.env.local` (see `.env.local.example`):
+Requires `.env.local`:
 - `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Supabase connection
 - `SUPABASE_SERVICE_ROLE_KEY` — Server-side admin Supabase client
-- `NEXT_PUBLIC_AVALIADOR_PASSWORD` / `NEXT_PUBLIC_ADMIN_PASSWORD` — Protected evaluation routes
+- `AVALIALLOS_AVALIADOR_PASSWORD` / `AVALIALLOS_ADMIN_PASSWORD` — Protected AvaliAllos routes
+- `NEXT_PUBLIC_CERTIFICADOS_ADMIN_PASSWORD` — Certificate admin panel
+- `PAINEL_PASSWORD` — Marketing/sales panel auth
+- `STRIPE_SECRET_KEY` — Stripe API for payments
+- `NEXT_PUBLIC_BASE_URL` — Site base URL (e.g., `https://allos.org.br`)
 
 ### DidaticTemplate System
 
@@ -92,6 +100,12 @@ Requires `.env.local` (see `.env.local.example`):
 ### Data Layer
 
 Supabase is the single data store. API routes handle server-side operations; some client components also query Supabase directly. Key tables: `avaliadores`, `avaliados`, `slots_fixos`, `slots`, `bookings`, `avaliacoes`, `avaliador_disponibilidade`, `avaliador_disp_fixo`, `certificado_submissions`. Database schema and setup details are in `SETUP.md` and `supabase/schema.sql` (AvaliAllos), `CERTIFICADOS_SETUP.md` (certificates), and `setup/painel-tables.sql` (painel).
+
+### Utility Scripts
+
+- `scripts/import-selecao.mjs` — CLI tool for importing selective process data
+- `scripts/merge-avaliadores.mjs` — CLI tool for merging evaluator records
+- `setup/*.sql` — SQL files for initializing Supabase tables across all subsystems
 
 ## Style Conventions
 
