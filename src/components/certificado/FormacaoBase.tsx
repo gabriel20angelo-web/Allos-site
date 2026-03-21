@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Clock, Plus, Trash2, Eye, EyeOff, X, AlertTriangle,
   RefreshCw, Image as ImageIcon, Download, ChevronDown,
-  CheckCircle2, XCircle, MinusCircle, Calendar, Copy, Check, MessageCircle, Send, Edit3
+  CheckCircle2, XCircle, MinusCircle, Calendar, Copy, Check, MessageCircle, Send, Edit3,
+  Video, Ban, Link as LinkIcon
 } from 'lucide-react'
 
 const DIAS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'] as const
@@ -16,12 +17,14 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; 
   conduzido: { label: 'Conduzido', color: '#22c55e', bg: 'rgba(34,197,94,0.1)', icon: <CheckCircle2 size={14} /> },
   nao_conduzido: { label: 'Não conduzido', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', icon: <XCircle size={14} /> },
   cancelado: { label: 'Cancelado', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', icon: <XCircle size={14} /> },
+  desmarcado: { label: 'Desmarcado', color: '#8b5cf6', bg: 'rgba(139,92,246,0.1)', icon: <Ban size={14} /> },
 }
 
 interface Horario { id: string; hora: string; ordem: number; ativo: boolean }
 interface Slot {
   id: string; dia_semana: number; horario_id: string; ativo: boolean; status: string
   atividade_nome: string | null
+  meet_link: string | null
   formacao_horarios: { hora: string; ordem: number } | null
 }
 interface Alocacao {
@@ -29,7 +32,7 @@ interface Alocacao {
   certificado_condutores: { id: string; nome: string; telefone: string | null } | null
 }
 interface Condutor { id: string; nome: string; ativo: boolean; telefone: string | null }
-interface Atividade { id: string; nome: string; ativo: boolean }
+interface Atividade { id: string; nome: string; ativo: boolean; descricao?: string | null }
 interface Evento {
   id: string; titulo: string; descricao: string | null
   data_inicio: string; data_fim: string; ativo: boolean; created_at: string
@@ -49,6 +52,8 @@ export default function FormacaoBase({ atividades = [] }: FormacaoBaseProps) {
   const [condutores, setCondutores] = useState<Condutor[]>([])
   const [eventos, setEventos] = useState<Evento[]>([])
   const [loading, setLoading] = useState(true)
+  const [gruposVisiveis, setGruposVisiveis] = useState(true)
+  const [duracaoMinutos, setDuracaoMinutos] = useState(90)
 
   const [newHora, setNewHora] = useState('')
   const [addingCondutor, setAddingCondutor] = useState<string | null>(null) // slot_id
@@ -74,18 +79,21 @@ export default function FormacaoBase({ atividades = [] }: FormacaoBaseProps) {
 
   const loadData = useCallback(async () => {
     setLoading(true)
-    const [hRes, sRes, aRes, cRes, eRes] = await Promise.all([
+    const [hRes, sRes, aRes, cRes, eRes, cfgRes] = await Promise.all([
       fetch('/api/certificados/formacao?type=horarios').then(r => r.json()),
       fetch('/api/certificados/formacao?type=slots').then(r => r.json()),
       fetch('/api/certificados/formacao?type=alocacoes').then(r => r.json()),
       fetch('/api/certificados/formacao?type=condutores').then(r => r.json()),
       fetch('/api/certificados/formacao?type=eventos').then(r => r.json()),
+      fetch('/api/certificados/formacao?type=config').then(r => r.json()),
     ])
     if (Array.isArray(hRes)) setHorarios(hRes)
     if (Array.isArray(sRes)) setSlots(sRes)
     if (Array.isArray(aRes)) setAlocacoes(aRes)
     if (Array.isArray(cRes)) setCondutores(cRes)
     if (Array.isArray(eRes)) setEventos(eRes)
+    if (cfgRes && typeof cfgRes.grupos_visiveis === 'boolean') setGruposVisiveis(cfgRes.grupos_visiveis)
+    if (cfgRes && typeof cfgRes.duracao_minutos === 'number') setDuracaoMinutos(cfgRes.duracao_minutos)
     setLoading(false)
   }, [])
 
@@ -183,6 +191,13 @@ export default function FormacaoBase({ atividades = [] }: FormacaoBaseProps) {
   async function setSlotAtividade(slotId: string, atividade_nome: string | null) {
     await api({ action: 'update_slot', id: slotId, atividade_nome })
     loadData()
+  }
+
+  // ─── Meet link no slot ───────────────────────────────────────────
+  async function setSlotMeetLink(slotId: string, meet_link: string | null) {
+    await api({ action: 'update_slot', id: slotId, meet_link })
+    loadData()
+    showToast('Link do Meet salvo')
   }
 
   // ─── Cronograma auto-generate ────────────────────────────────
@@ -381,6 +396,7 @@ export default function FormacaoBase({ atividades = [] }: FormacaoBaseProps) {
       conduzidos: activeSlots.filter(s => s.status === 'conduzido').length,
       naoCond: activeSlots.filter(s => s.status === 'nao_conduzido').length,
       cancelados: activeSlots.filter(s => s.status === 'cancelado').length,
+      desmarcados: activeSlots.filter(s => s.status === 'desmarcado').length,
       pendentes: activeSlots.filter(s => s.status === 'pendente').length,
       atividadeCount,
     }
@@ -445,11 +461,12 @@ export default function FormacaoBase({ atividades = [] }: FormacaoBaseProps) {
       </AnimatePresence>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         <MiniStat label="Grupos" value={stats.total} color="rgba(253,251,247,0.6)" />
         <MiniStat label="Conduzidos" value={stats.conduzidos} color="#22c55e" />
         <MiniStat label="Não conduzidos" value={stats.naoCond} color="#f59e0b" />
         <MiniStat label="Cancelados" value={stats.cancelados} color="#ef4444" />
+        <MiniStat label="Desmarcados" value={stats.desmarcados} color="#8b5cf6" />
         <MiniStat label="Pendentes" value={stats.pendentes} color="rgba(253,251,247,0.4)" />
       </div>
 
@@ -486,11 +503,41 @@ export default function FormacaoBase({ atividades = [] }: FormacaoBaseProps) {
           </button>
         ))}
 
-        <button onClick={confirmResetStatuses}
-          className="font-dm text-xs px-4 py-2 rounded-full flex items-center gap-1.5 transition-all ml-auto"
-          style={{ backgroundColor: 'rgba(255,255,255,0.03)', color: 'rgba(253,251,247,0.3)', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <RefreshCw size={14} /> Nova Semana
-        </button>
+        <div className="flex items-center gap-2 ml-auto">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-dm text-xs"
+            style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', color: 'rgba(253,251,247,0.3)' }}>
+            <Clock size={12} />
+            <input type="number" value={duracaoMinutos} min={30} max={300} step={10}
+              onChange={e => setDuracaoMinutos(Number(e.target.value) || 120)}
+              onBlur={async () => {
+                await api({ action: 'update_duracao', duracao_minutos: duracaoMinutos })
+                showToast('Duração atualizada')
+              }}
+              className="w-10 bg-transparent outline-none text-center"
+              style={{ color: 'rgba(253,251,247,0.6)' }} />
+            <span>min</span>
+          </div>
+          <button onClick={async () => {
+            const next = !gruposVisiveis
+            setGruposVisiveis(next)
+            await api({ action: 'toggle_grupos_visiveis', grupos_visiveis: next })
+            showToast(next ? 'Grupos visíveis no site' : 'Grupos ocultos no site')
+          }}
+            className="font-dm text-xs px-4 py-2 rounded-full flex items-center gap-1.5 transition-all"
+            style={{
+              backgroundColor: gruposVisiveis ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.03)',
+              color: gruposVisiveis ? '#22c55e' : 'rgba(253,251,247,0.3)',
+              border: `1px solid ${gruposVisiveis ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.06)'}`,
+            }}>
+            {gruposVisiveis ? <Eye size={14} /> : <EyeOff size={14} />}
+            {gruposVisiveis ? 'Visível no site' : 'Oculto no site'}
+          </button>
+          <button onClick={confirmResetStatuses}
+            className="font-dm text-xs px-4 py-2 rounded-full flex items-center gap-1.5 transition-all"
+            style={{ backgroundColor: 'rgba(255,255,255,0.03)', color: 'rgba(253,251,247,0.3)', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <RefreshCw size={14} /> Nova Semana
+          </button>
+        </div>
       </div>
 
       <AnimatePresence mode="wait">
@@ -581,6 +628,12 @@ export default function FormacaoBase({ atividades = [] }: FormacaoBaseProps) {
                                     options={atividades.filter(a => a.ativo).map(a => ({ value: a.nome, label: a.nome }))}
                                     activeColor={slot.atividade_nome ? '#C84B31' : undefined}
                                     size="xs"
+                                  />
+
+                                  {/* Meet link */}
+                                  <MeetLinkInput
+                                    value={slot.meet_link || ''}
+                                    onSave={(link) => setSlotMeetLink(slot.id, link || null)}
                                   />
 
                                   {/* Condutores */}
@@ -1220,6 +1273,47 @@ function DarkSelect({ value, onChange, onClose, placeholder, options, activeColo
           </div>
         </>
       )}
+    </div>
+  )
+}
+
+function MeetLinkInput({ value, onSave }: { value: string; onSave: (link: string) => void }) {
+  const [editing, setEditing] = useState(false)
+  const [link, setLink] = useState(value)
+
+  useEffect(() => { setLink(value) }, [value])
+
+  if (!editing) {
+    return (
+      <button onClick={() => setEditing(true)}
+        className="w-full font-dm text-[10px] py-0.5 px-1.5 rounded flex items-center gap-1 transition-all hover:bg-white/[0.03] truncate"
+        style={{
+          color: value ? '#22c55e' : 'rgba(253,251,247,0.2)',
+          border: `1px solid ${value ? 'rgba(34,197,94,0.15)' : 'rgba(255,255,255,0.06)'}`,
+          backgroundColor: value ? 'rgba(34,197,94,0.05)' : 'rgba(255,255,255,0.02)',
+        }}>
+        <Video size={9} className="flex-shrink-0" />
+        <span className="truncate">{value ? 'Meet' : '+ Meet'}</span>
+      </button>
+    )
+  }
+
+  return (
+    <div className="flex gap-0.5">
+      <input value={link} onChange={e => setLink(e.target.value)}
+        placeholder="https://meet.google.com/..."
+        onKeyDown={e => { if (e.key === 'Enter') { onSave(link); setEditing(false) } if (e.key === 'Escape') setEditing(false) }}
+        autoFocus
+        className="font-dm text-[10px] flex-1 px-1.5 py-0.5 rounded outline-none min-w-0"
+        style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(253,251,247,0.8)' }} />
+      <button onClick={() => { onSave(link); setEditing(false) }}
+        className="p-0.5 rounded hover:bg-white/[0.06]" style={{ color: '#22c55e' }}>
+        <Check size={10} />
+      </button>
+      <button onClick={() => { setLink(value); setEditing(false) }}
+        className="p-0.5 rounded hover:bg-white/[0.06]" style={{ color: 'rgba(253,251,247,0.3)' }}>
+        <X size={10} />
+      </button>
     </div>
   )
 }

@@ -40,10 +40,11 @@ export async function POST(req: NextRequest) {
   }
 
   if (action === 'update_atividade') {
-    const { id, nome, carga_horaria } = body
+    const { id, nome, carga_horaria, descricao } = body
     const updates: Record<string, unknown> = {}
     if (nome !== undefined) updates.nome = nome
     if (carga_horaria !== undefined) updates.carga_horaria = carga_horaria
+    if (descricao !== undefined) updates.descricao = descricao
     const { error } = await sb().from('certificado_atividades').update(updates).eq('id', id)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     return NextResponse.json({ success: true })

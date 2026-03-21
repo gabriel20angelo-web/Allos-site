@@ -43,6 +43,36 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(data)
   }
 
+  // Public schedule data (for /formacao page integration)
+  if (type === 'cronograma_publico') {
+    // Check visibility flag first
+    const { data: config } = await sb().from('formacao_cronograma').select('grupos_visiveis, duracao_minutos').limit(1).single()
+    if (config && config.grupos_visiveis === false) {
+      return NextResponse.json({ visivel: false, horarios: [], slots: [], atividades: [] })
+    }
+
+    const [horariosRes, slotsRes, atividadesRes] = await Promise.all([
+      sb().from('formacao_horarios').select('*').eq('ativo', true).order('ordem'),
+      sb().from('formacao_slots').select('*, formacao_horarios(hora, ordem)').eq('ativo', true),
+      sb().from('certificado_atividades').select('id, nome, descricao').eq('ativo', true),
+    ])
+    if (horariosRes.error) return NextResponse.json({ error: horariosRes.error.message }, { status: 500 })
+    return NextResponse.json({
+      visivel: true,
+      duracao_minutos: config?.duracao_minutos || 120,
+      horarios: horariosRes.data,
+      slots: slotsRes.data,
+      atividades: atividadesRes.data,
+    })
+  }
+
+  // Get visibility config (admin)
+  if (type === 'config') {
+    const { data, error } = await sb().from('formacao_cronograma').select('grupos_visiveis, duracao_minutos').limit(1).single()
+    if (error && error.code !== 'PGRST116') return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json(data || { grupos_visiveis: true, duracao_minutos: 90 })
+  }
+
   // Active events only (public - filtered by date)
   if (type === 'eventos_ativos') {
     const now = new Date().toISOString()
@@ -100,11 +130,12 @@ export async function POST(req: NextRequest) {
   }
 
   if (action === 'update_slot') {
-    const { id, ativo, status, atividade_nome } = body
+    const { id, ativo, status, atividade_nome, meet_link } = body
     const updates: Record<string, unknown> = {}
     if (ativo !== undefined) updates.ativo = ativo
     if (status !== undefined) updates.status = status
     if (atividade_nome !== undefined) updates.atividade_nome = atividade_nome
+    if (meet_link !== undefined) updates.meet_link = meet_link
     const { error } = await sb().from('formacao_slots').update(updates).eq('id', id)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     return NextResponse.json({ success: true })
@@ -150,6 +181,28 @@ export async function POST(req: NextRequest) {
       if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     } else {
       const { error } = await sb().from('formacao_cronograma').insert({ imagem_base64 })
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+    return NextResponse.json({ success: true })
+  }
+
+  // Toggle grupos visibility
+  if (action === 'toggle_grupos_visiveis') {
+    const { grupos_visiveis } = body
+    const { data: existing } = await sb().from('formacao_cronograma').select('id').limit(1).single()
+    if (existing) {
+      const { error } = await sb().from('formacao_cronograma').update({ grupos_visiveis }).eq('id', existing.id)
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+    return NextResponse.json({ success: true })
+  }
+
+  // Update duracao_minutos
+  if (action === 'update_duracao') {
+    const { duracao_minutos } = body
+    const { data: existing } = await sb().from('formacao_cronograma').select('id').limit(1).single()
+    if (existing) {
+      const { error } = await sb().from('formacao_cronograma').update({ duracao_minutos }).eq('id', existing.id)
       if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     }
     return NextResponse.json({ success: true })

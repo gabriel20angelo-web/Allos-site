@@ -33,6 +33,7 @@ interface Atividade {
   nome: string
   ativo: boolean
   carga_horaria: number
+  descricao?: string | null
 }
 
 interface Condutor {
@@ -123,6 +124,7 @@ export default function AdminCertificados() {
   const [editingAtividade, setEditingAtividade] = useState<Atividade | null>(null)
   const [editAtividadeNome, setEditAtividadeNome] = useState('')
   const [editAtividadeHoras, setEditAtividadeHoras] = useState(2)
+  const [editAtividadeDescricao, setEditAtividadeDescricao] = useState('')
 
   // Certificados tab state
   const [certSearch, setCertSearch] = useState('')
@@ -280,7 +282,7 @@ export default function AdminCertificados() {
 
   async function updateAtividade() {
     if (!editingAtividade) return
-    await adminApi({ action: 'update_atividade', id: editingAtividade.id, nome: editAtividadeNome.trim(), carga_horaria: editAtividadeHoras })
+    await adminApi({ action: 'update_atividade', id: editingAtividade.id, nome: editAtividadeNome.trim(), carga_horaria: editAtividadeHoras, descricao: editAtividadeDescricao.trim() || null })
     setEditingAtividade(null)
     loadData()
     showToast('Atividade atualizada')
@@ -873,47 +875,59 @@ export default function AdminCertificados() {
                   const feedbackCount = submissions.filter(s => s.atividade_nome === a.nome).length
                   const isEditing = editingAtividade?.id === a.id
                   return (
-                  <div key={a.id} className="flex items-center gap-3 p-3 rounded-xl"
+                  <div key={a.id} className="p-3 rounded-xl space-y-2"
                     style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
                     {isEditing ? (
-                      <>
-                        <input value={editAtividadeNome} onChange={e => setEditAtividadeNome(e.target.value)}
-                          className="font-dm flex-1 px-3 py-2 rounded-lg text-sm outline-none"
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                          <input value={editAtividadeNome} onChange={e => setEditAtividadeNome(e.target.value)}
+                            className="font-dm flex-1 px-3 py-2 rounded-lg text-sm outline-none"
+                            style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(200,75,49,0.3)', color: 'rgba(253,251,247,0.9)' }} />
+                          <input type="number" value={editAtividadeHoras} onChange={e => setEditAtividadeHoras(Number(e.target.value) || 2)} min={1} max={100}
+                            className="font-dm w-16 px-2 py-2 rounded-lg text-sm outline-none text-center"
+                            style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(200,75,49,0.3)', color: 'rgba(253,251,247,0.9)' }} />
+                          <span className="font-dm text-xs" style={{ color: 'rgba(253,251,247,0.3)' }}>h</span>
+                          <button onClick={updateAtividade} className="font-dm text-xs px-3 py-1.5 rounded-lg" style={{ backgroundColor: 'rgba(200,75,49,0.15)', color: '#C84B31' }}>
+                            <Check size={14} />
+                          </button>
+                          <button onClick={() => setEditingAtividade(null)} className="font-dm text-xs px-3 py-1.5 rounded-lg" style={{ color: 'rgba(253,251,247,0.3)' }}>
+                            <X size={14} />
+                          </button>
+                        </div>
+                        <textarea value={editAtividadeDescricao} onChange={e => setEditAtividadeDescricao(e.target.value)}
+                          placeholder="Descrição do grupo (aparece na página de formação)..."
+                          rows={2}
+                          className="font-dm w-full px-3 py-2 rounded-lg text-xs outline-none resize-none"
                           style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(200,75,49,0.3)', color: 'rgba(253,251,247,0.9)' }} />
-                        <input type="number" value={editAtividadeHoras} onChange={e => setEditAtividadeHoras(Number(e.target.value) || 2)} min={1} max={100}
-                          className="font-dm w-16 px-2 py-2 rounded-lg text-sm outline-none text-center"
-                          style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(200,75,49,0.3)', color: 'rgba(253,251,247,0.9)' }} />
-                        <span className="font-dm text-xs" style={{ color: 'rgba(253,251,247,0.3)' }}>h</span>
-                        <button onClick={updateAtividade} className="font-dm text-xs px-3 py-1.5 rounded-lg" style={{ backgroundColor: 'rgba(200,75,49,0.15)', color: '#C84B31' }}>
-                          <Check size={14} />
-                        </button>
-                        <button onClick={() => setEditingAtividade(null)} className="font-dm text-xs px-3 py-1.5 rounded-lg" style={{ color: 'rgba(253,251,247,0.3)' }}>
-                          <X size={14} />
-                        </button>
-                      </>
+                      </div>
                     ) : (
                       <>
-                        <span className="font-dm text-sm flex-1" style={{ color: a.ativo ? 'rgba(253,251,247,0.7)' : 'rgba(253,251,247,0.25)' }}>{a.nome}</span>
-                        <span className="font-dm text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(200,75,49,0.08)', color: 'rgba(200,75,49,0.5)' }}>
-                          {a.carga_horaria || 2}h
-                        </span>
-                        {feedbackCount > 0 && (
-                          <span className="font-dm text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(200,75,49,0.08)', color: 'rgba(200,75,49,0.6)' }}>
-                            {feedbackCount} feedback{feedbackCount > 1 ? 's' : ''}
+                        <div className="flex items-center gap-3">
+                          <span className="font-dm text-sm flex-1" style={{ color: a.ativo ? 'rgba(253,251,247,0.7)' : 'rgba(253,251,247,0.25)' }}>{a.nome}</span>
+                          <span className="font-dm text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(200,75,49,0.08)', color: 'rgba(200,75,49,0.5)' }}>
+                            {a.carga_horaria || 2}h
                           </span>
+                          {feedbackCount > 0 && (
+                            <span className="font-dm text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(200,75,49,0.08)', color: 'rgba(200,75,49,0.6)' }}>
+                              {feedbackCount} feedback{feedbackCount > 1 ? 's' : ''}
+                            </span>
+                          )}
+                          <button onClick={() => { setEditingAtividade(a); setEditAtividadeNome(a.nome); setEditAtividadeHoras(a.carga_horaria || 2); setEditAtividadeDescricao(a.descricao || '') }} className="p-1.5 rounded-lg"
+                            style={{ color: 'rgba(253,251,247,0.3)' }}>
+                            <Edit3 size={14} />
+                          </button>
+                          <button onClick={() => toggleAtividade(a.id, a.ativo)} className="p-1.5 rounded-lg"
+                            style={{ color: a.ativo ? '#C84B31' : 'rgba(253,251,247,0.2)' }}>
+                            {a.ativo ? <Eye size={14} /> : <EyeOff size={14} />}
+                          </button>
+                          <button onClick={() => confirmDeleteAtividade(a.id, a.nome)} className="p-1.5 rounded-lg hover:bg-red-500/10"
+                            style={{ color: 'rgba(253,251,247,0.15)' }}>
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                        {a.descricao && (
+                          <p className="font-dm text-xs leading-relaxed pl-0.5" style={{ color: 'rgba(253,251,247,0.3)' }}>{a.descricao}</p>
                         )}
-                        <button onClick={() => { setEditingAtividade(a); setEditAtividadeNome(a.nome); setEditAtividadeHoras(a.carga_horaria || 2) }} className="p-1.5 rounded-lg"
-                          style={{ color: 'rgba(253,251,247,0.3)' }}>
-                          <Edit3 size={14} />
-                        </button>
-                        <button onClick={() => toggleAtividade(a.id, a.ativo)} className="p-1.5 rounded-lg"
-                          style={{ color: a.ativo ? '#C84B31' : 'rgba(253,251,247,0.2)' }}>
-                          {a.ativo ? <Eye size={14} /> : <EyeOff size={14} />}
-                        </button>
-                        <button onClick={() => confirmDeleteAtividade(a.id, a.nome)} className="p-1.5 rounded-lg hover:bg-red-500/10"
-                          style={{ color: 'rgba(253,251,247,0.15)' }}>
-                          <Trash2 size={14} />
-                        </button>
                       </>
                     )}
                   </div>
