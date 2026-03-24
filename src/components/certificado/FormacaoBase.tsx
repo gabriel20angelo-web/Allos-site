@@ -6,7 +6,7 @@ import {
   Clock, Plus, Trash2, Eye, EyeOff, X, AlertTriangle,
   RefreshCw, Image as ImageIcon, Download, ChevronDown,
   CheckCircle2, XCircle, MinusCircle, Calendar, Copy, Check, MessageCircle, Send, Edit3,
-  Video, Ban, Link as LinkIcon
+  Video, Ban, Link as LinkIcon, Trophy
 } from 'lucide-react'
 
 const DIAS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'] as const
@@ -32,13 +32,29 @@ interface Alocacao {
   certificado_condutores: { id: string; nome: string; telefone: string | null } | null
 }
 interface Condutor { id: string; nome: string; ativo: boolean; telefone: string | null }
-interface Atividade { id: string; nome: string; ativo: boolean; descricao?: string | null }
+interface Atividade { id: string; nome: string; ativo: boolean; descricao?: string | null; carga_horaria?: number }
 interface Evento {
   id: string; titulo: string; descricao: string | null
   data_inicio: string; data_fim: string; ativo: boolean; created_at: string
 }
 
-type SubTab = 'calendario' | 'horarios' | 'cronograma' | 'whatsapp' | 'eventos'
+type SubTab = 'calendario' | 'horarios' | 'cronograma' | 'whatsapp' | 'eventos' | 'ranking'
+
+type RankingPeriod = 'week' | 'month' | 'quarter' | 'semester' | 'year'
+const RANKING_LABELS: Record<RankingPeriod, string> = { week: 'Semana', month: 'Mês', quarter: 'Trimestre', semester: 'Semestre', year: 'Ano' }
+
+function getRankingDate(period: RankingPeriod): Date {
+  const now = new Date()
+  switch (period) {
+    case 'week': { const d = new Date(now); d.setDate(d.getDate() - d.getDay() + 1); d.setHours(0,0,0,0); return d }
+    case 'month': return new Date(now.getFullYear(), now.getMonth(), 1)
+    case 'quarter': return new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3, 1)
+    case 'semester': return new Date(now.getFullYear(), now.getMonth() < 6 ? 0 : 6, 1)
+    case 'year': return new Date(now.getFullYear(), 0, 1)
+  }
+}
+
+interface RankingEntry { nome: string; count: number; horas: number }
 
 interface FormacaoBaseProps {
   atividades?: Atividade[]
@@ -58,6 +74,11 @@ export default function FormacaoBase({ atividades = [] }: FormacaoBaseProps) {
   const [newHora, setNewHora] = useState('')
   const [addingCondutor, setAddingCondutor] = useState<string | null>(null) // slot_id
   const cronogramaCanvasRef = useRef<HTMLCanvasElement>(null)
+
+  // Ranking state
+  const [rankingPeriod, setRankingPeriod] = useState<RankingPeriod>('month')
+  const [rankingData, setRankingData] = useState<RankingEntry[]>([])
+  const [rankingLoading, setRankingLoading] = useState(false)
   const logoRef = useRef<HTMLImageElement | null>(null)
   const [confirmModal, setConfirmModal] = useState<{ title: string; message: string; onConfirm: () => void } | null>(null)
   const [actionLoading, setActionLoading] = useState(false)
@@ -98,6 +119,40 @@ export default function FormacaoBase({ atividades = [] }: FormacaoBaseProps) {
   }, [])
 
   useEffect(() => { loadData() }, [loadData])
+
+  // ─── Load ranking when tab is active ─────────────────────────
+  useEffect(() => {
+    if (subTab !== 'ranking') return
+    setRankingLoading(true)
+    const since = getRankingDate(rankingPeriod)
+    fetch('/api/certificados/admin?type=submissions')
+      .then(r => r.json())
+      .then((subs: { nome_completo: string; atividade_nome: string; created_at: string }[]) => {
+        if (!Array.isArray(subs)) { setRankingData([]); return }
+        const filtered = subs.filter(s => new Date(s.created_at) >= since)
+        const map = new Map<string, { count: number; horas: number }>()
+
+        // Build hours lookup from atividades prop
+        const horasMap = new Map<string, number>()
+        atividades.forEach(a => horasMap.set(a.nome.toLowerCase(), a.carga_horaria || 2))
+
+        filtered.forEach(s => {
+          const nome = s.nome_completo.trim()
+          const entry = map.get(nome) || { count: 0, horas: 0 }
+          entry.count++
+          entry.horas += horasMap.get(s.atividade_nome?.toLowerCase()) || 2
+          map.set(nome, entry)
+        })
+
+        const ranked = Array.from(map.entries())
+          .map(([nome, d]) => ({ nome, count: d.count, horas: d.horas }))
+          .sort((a, b) => b.horas - a.horas || b.count - a.count)
+          .slice(0, 5)
+        setRankingData(ranked)
+      })
+      .catch(() => setRankingData([]))
+      .finally(() => setRankingLoading(false))
+  }, [subTab, rankingPeriod, atividades])
 
   // ─── Derived data ──────────────────────────────────────────────
   const activeHorarios = useMemo(() => horarios.filter(h => h.ativo).sort((a, b) => a.ordem - b.ordem), [horarios])
@@ -491,6 +546,7 @@ export default function FormacaoBase({ atividades = [] }: FormacaoBaseProps) {
           { key: 'cronograma', label: 'Cronograma', icon: <ImageIcon size={14} /> },
           { key: 'whatsapp', label: 'WhatsApp', icon: <Send size={14} /> },
           { key: 'eventos', label: 'Eventos', icon: <Calendar size={14} /> },
+          { key: 'ranking', label: 'Ranking', icon: <Trophy size={14} /> },
         ] as { key: SubTab; label: string; icon: React.ReactNode }[]).map(t => (
           <button key={t.key} onClick={() => setSubTab(t.key)}
             className="font-dm text-xs px-4 py-2 rounded-full flex items-center gap-1.5 transition-all"
@@ -777,6 +833,95 @@ export default function FormacaoBase({ atividades = [] }: FormacaoBaseProps) {
         {subTab === 'eventos' && (
           <motion.div key="eventos" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <EventosPanel eventos={eventos} api={api} loadData={loadData} showToast={showToast} />
+          </motion.div>
+        )}
+
+        {/* ─── Ranking ──────────────────────────────────────────── */}
+        {subTab === 'ranking' && (
+          <motion.div key="ranking" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-5">
+            {/* Period filters */}
+            <div className="flex flex-wrap gap-2">
+              {(Object.keys(RANKING_LABELS) as RankingPeriod[]).map(p => (
+                <button key={p} onClick={() => setRankingPeriod(p)}
+                  className="font-dm text-xs px-4 py-2 rounded-full transition-all"
+                  style={{
+                    backgroundColor: rankingPeriod === p ? 'rgba(251,188,5,0.12)' : 'rgba(255,255,255,0.03)',
+                    color: rankingPeriod === p ? '#FBBC05' : 'rgba(253,251,247,0.4)',
+                    border: `1px solid ${rankingPeriod === p ? 'rgba(251,188,5,0.3)' : 'rgba(255,255,255,0.06)'}`,
+                  }}>
+                  {RANKING_LABELS[p]}
+                </button>
+              ))}
+            </div>
+
+            {/* Ranking card */}
+            <div className="rounded-xl overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div className="px-5 py-4 flex items-center gap-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                <Trophy size={16} style={{ color: '#FBBC05' }} />
+                <h3 className="font-dm text-sm font-medium" style={{ color: 'rgba(253,251,247,0.7)' }}>
+                  Top 5 — Quem mais participou
+                </h3>
+                <span className="font-dm text-xs ml-auto px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(251,188,5,0.08)', color: '#FBBC05' }}>
+                  {RANKING_LABELS[rankingPeriod]}
+                </span>
+              </div>
+
+              {rankingLoading ? (
+                <div className="flex justify-center py-12">
+                  <div className="w-6 h-6 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: 'rgba(253,251,247,0.1)', borderTopColor: 'transparent' }} />
+                </div>
+              ) : rankingData.length === 0 ? (
+                <div className="py-12 text-center">
+                  <Trophy size={36} style={{ color: 'rgba(253,251,247,0.08)', margin: '0 auto 12px' }} />
+                  <p className="font-dm text-sm" style={{ color: 'rgba(253,251,247,0.3)' }}>Nenhuma participação neste período</p>
+                </div>
+              ) : (
+                <div>
+                  {rankingData.map((entry, i) => {
+                    const medals = ['#FFD700', '#C0C0C0', '#CD7F32']
+                    const isMedal = i < 3
+                    const maxHoras = rankingData[0]?.horas || 1
+
+                    return (
+                      <div key={entry.nome}
+                        className="flex items-center gap-4 px-5 py-4 transition-all"
+                        style={{ borderBottom: i < rankingData.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none', backgroundColor: i === 0 ? 'rgba(251,188,5,0.03)' : 'transparent' }}>
+                        {/* Position */}
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-fraunces font-bold text-sm"
+                          style={{
+                            backgroundColor: isMedal ? `${medals[i]}15` : 'rgba(255,255,255,0.04)',
+                            color: isMedal ? medals[i] : 'rgba(253,251,247,0.3)',
+                            border: `1.5px solid ${isMedal ? `${medals[i]}30` : 'rgba(255,255,255,0.06)'}`,
+                          }}>
+                          {i + 1}
+                        </div>
+
+                        {/* Info */}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-dm text-sm font-medium truncate" style={{ color: i === 0 ? 'rgba(253,251,247,0.95)' : 'rgba(253,251,247,0.7)' }}>
+                            {entry.nome}
+                          </p>
+                          {/* Progress bar */}
+                          <div className="mt-1.5 h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}>
+                            <div className="h-full rounded-full transition-all duration-500" style={{ width: `${(entry.horas / maxHoras) * 100}%`, background: isMedal ? `linear-gradient(90deg, ${medals[i]}, ${medals[i]}88)` : 'rgba(253,251,247,0.15)' }} />
+                          </div>
+                        </div>
+
+                        {/* Stats */}
+                        <div className="text-right shrink-0">
+                          <p className="font-fraunces font-bold text-base" style={{ color: isMedal ? medals[i] : 'rgba(253,251,247,0.5)' }}>
+                            {entry.horas}h
+                          </p>
+                          <p className="font-dm text-[10px]" style={{ color: 'rgba(253,251,247,0.3)' }}>
+                            {entry.count} {entry.count === 1 ? 'grupo' : 'grupos'}
+                          </p>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

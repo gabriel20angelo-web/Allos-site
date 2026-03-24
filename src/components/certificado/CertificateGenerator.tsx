@@ -7,6 +7,7 @@ interface CertificateData {
   nomeParticipante: string
   atividade: string
   data: string
+  dataFim?: string
   tipo?: 'participação' | 'conclusão' | 'supervisão' | 'palestra' | 'organização'
   cargaHoraria?: number
   cargaHorariaExtenso?: string
@@ -50,7 +51,9 @@ export default function CertificateGenerator({ data, onReady }: CertificateGener
     const name = data.nomeParticipante
     const ch = data.cargaHoraria || 2
     const chExt = data.cargaHorariaExtenso || 'duas'
-    const dateStr = formatDatePtBR(data.data)
+    const dataInicio = formatDatePtBR(data.data)
+    const dataFim = data.dataFim ? formatDatePtBR(data.dataFim) : null
+    const dateStr = dataFim && data.dataFim !== data.data ? `${dataInicio} a ${dataFim}` : dataInicio
     const tipo = data.tipo || 'participação'
     const cx = w / 2
 
@@ -139,41 +142,44 @@ export default function CertificateGenerator({ data, onReady }: CertificateGener
     ctx.fillRect(cx - nw / 2 - 20, 448, nw + 40, 5)
 
     // ── Body text ──
+    const hasRange = dataFim && data.dataFim !== data.data
+    const periodoStr = hasRange ? `no período de ${dateStr}` : `em ${dateStr}`
+
     let bodyLines: string[]
     switch (tipo) {
       case 'conclusão':
         bodyLines = [
           `concluiu a formação em \u201C${data.atividade}\u201D,`,
           `promovida pela Associação Allos, com carga horária total de ${ch} (${chExt}) horas,`,
-          `no período encerrado em ${dateStr}.`,
+          `${periodoStr}.`,
         ]
         break
       case 'supervisão':
         bodyLines = [
           `realizou supervisão clínica na modalidade \u201C${data.atividade}\u201D,`,
           `promovida pela Associação Allos, com carga horária de ${ch} (${chExt}) horas,`,
-          `em ${dateStr}.`,
+          `${periodoStr}.`,
         ]
         break
       case 'palestra':
         bodyLines = [
           `participou da palestra \u201C${data.atividade}\u201D,`,
           `promovida pela Associação Allos, com duração de ${ch} (${chExt}) horas,`,
-          `realizada em ${dateStr}.`,
+          `${hasRange ? periodoStr : `realizada em ${dateStr}`}.`,
         ]
         break
       case 'organização':
         bodyLines = [
           `atuou na organização da atividade \u201C${data.atividade}\u201D,`,
           `promovida pela Associação Allos,`,
-          `realizada em ${dateStr}.`,
+          `${hasRange ? periodoStr : `realizada em ${dateStr}`}.`,
         ]
         break
       default:
         bodyLines = [
           `participou da atividade \u201C${data.atividade}\u201D,`,
           `promovida pela Associação Allos, com carga horária de ${ch} (${chExt}) horas,`,
-          `realizada em ${dateStr}.`,
+          `${periodoStr}.`,
         ]
     }
 
@@ -187,7 +193,7 @@ export default function CertificateGenerator({ data, onReady }: CertificateGener
     const locY = 500 + bodyLines.length * 34 + 30
     ctx.font = 'italic 18px Georgia, "Times New Roman", serif'
     ctx.fillStyle = '#999999'
-    ctx.fillText(`Belo Horizonte, ${dateStr}`, cx, locY)
+    ctx.fillText(`Belo Horizonte, ${dataFim || dataInicio}`, cx, locY)
 
     // ── Signature image ──
     if (signatureImg) {

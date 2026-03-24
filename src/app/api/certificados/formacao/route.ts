@@ -193,6 +193,9 @@ export async function POST(req: NextRequest) {
     if (existing) {
       const { error } = await sb().from('formacao_cronograma').update({ grupos_visiveis }).eq('id', existing.id)
       if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    } else {
+      const { error } = await sb().from('formacao_cronograma').insert({ grupos_visiveis, duracao_minutos: 90 })
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     }
     return NextResponse.json({ success: true })
   }
@@ -203,6 +206,9 @@ export async function POST(req: NextRequest) {
     const { data: existing } = await sb().from('formacao_cronograma').select('id').limit(1).single()
     if (existing) {
       const { error } = await sb().from('formacao_cronograma').update({ duracao_minutos }).eq('id', existing.id)
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    } else {
+      const { error } = await sb().from('formacao_cronograma').insert({ duracao_minutos, grupos_visiveis: true })
       if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     }
     return NextResponse.json({ success: true })

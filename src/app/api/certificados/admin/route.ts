@@ -167,9 +167,10 @@ export async function POST(req: NextRequest) {
     // Only count submissions NOT yet claimed (current cycle)
     const { data: subs, error: subsErr } = await sb()
       .from('certificado_submissions')
-      .select('atividade_nome')
+      .select('atividade_nome, created_at')
       .ilike('nome_completo', nome.trim())
       .or('certificado_resgatado.is.null,certificado_resgatado.eq.false')
+      .order('created_at', { ascending: true })
 
     if (subsErr) return NextResponse.json({ error: subsErr.message }, { status: 500 })
 
@@ -183,22 +184,24 @@ export async function POST(req: NextRequest) {
       horasMap[a.nome.toLowerCase()] = a.carga_horaria || 2
     })
 
-    // Calculate hours per activity type
-    const porAtividade: Record<string, { count: number; horas: number }> = {}
+    // Calculate hours per activity type + date range
+    const porAtividade: Record<string, { count: number; horas: number; dataInicio: string; dataFim: string }> = {}
     let totalHoras = 0
-    ;(subs || []).forEach((s: { atividade_nome: string }) => {
+    ;(subs || []).forEach((s: { atividade_nome: string; created_at: string }) => {
       const nome_at = s.atividade_nome
       const ch = horasMap[nome_at.toLowerCase()] || 2
-      if (!porAtividade[nome_at]) porAtividade[nome_at] = { count: 0, horas: 0 }
+      const dia = s.created_at.split('T')[0]
+      if (!porAtividade[nome_at]) porAtividade[nome_at] = { count: 0, horas: 0, dataInicio: dia, dataFim: dia }
       porAtividade[nome_at].count++
       porAtividade[nome_at].horas += ch
+      porAtividade[nome_at].dataFim = dia
       totalHoras += ch
     })
 
     return NextResponse.json({
       totalHoras,
-      horasRestantes: Math.max(0, 30 - totalHoras),
-      liberado: totalHoras >= 30,
+      horasRestantes: Math.max(0, 20 - totalHoras),
+      liberado: totalHoras >= 20,
       porAtividade,
     })
   }

@@ -30,12 +30,12 @@ interface HorasInfo {
   totalHoras: number
   horasRestantes: number
   liberado: boolean
-  porAtividade: Record<string, { count: number; horas: number }>
+  porAtividade: Record<string, { count: number; horas: number; dataInicio?: string; dataFim?: string }>
 }
 
 type Step = 'identificacao' | 'atividade' | 'feedback' | 'sucesso'
 
-const HORAS_MINIMO = 30
+const HORAS_MINIMO = 20
 
 const SLIDE_VARIANTS = {
   enter: (direction: number) => ({ x: direction > 0 ? 60 : -60, opacity: 0 }),
@@ -71,6 +71,13 @@ export default function FormCertificado() {
   const [submitted, setSubmitted] = useState(false)
   const [claimed, setClaimed] = useState(false)
   const [claiming, setClaiming] = useState(false)
+
+  // Ranking state
+  type RankingPeriod = 'week' | 'month' | 'quarter' | 'semester' | 'year'
+  const RANKING_LABELS: Record<RankingPeriod, string> = { week: 'Semana', month: 'Mês', quarter: 'Trimestre', semester: 'Semestre', year: 'Ano' }
+  const [rankingPeriod, setRankingPeriod] = useState<RankingPeriod>('week')
+  const [rankingData, setRankingData] = useState<{ nome: string; horas: number; count: number }[]>([])
+  const [rankingLoading, setRankingLoading] = useState(false)
 
   useEffect(() => {
     loadData()
@@ -122,6 +129,45 @@ export default function FormCertificado() {
       setClaiming(false)
     }
   }
+
+  // Fetch ranking when success screen is shown or period changes
+  useEffect(() => {
+    if (!submitted) return
+    setRankingLoading(true)
+    const now = new Date()
+    let since: Date
+    switch (rankingPeriod) {
+      case 'week': { since = new Date(now); since.setDate(since.getDate() - since.getDay() + 1); since.setHours(0,0,0,0); break }
+      case 'month': since = new Date(now.getFullYear(), now.getMonth(), 1); break
+      case 'quarter': since = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3, 1); break
+      case 'semester': since = new Date(now.getFullYear(), now.getMonth() < 6 ? 0 : 6, 1); break
+      case 'year': since = new Date(now.getFullYear(), 0, 1); break
+    }
+    fetch('/api/certificados/admin?type=submissions')
+      .then(r => r.json())
+      .then((subs: { nome_completo: string; atividade_nome: string; created_at: string }[]) => {
+        if (!Array.isArray(subs)) { setRankingData([]); return }
+        const filtered = subs.filter(s => new Date(s.created_at) >= since)
+        const horasMap = new Map<string, number>()
+        atividades.forEach(a => horasMap.set(a.nome.toLowerCase(), a.carga_horaria))
+        const map = new Map<string, { count: number; horas: number }>()
+        filtered.forEach(s => {
+          const n = s.nome_completo.trim()
+          const e = map.get(n) || { count: 0, horas: 0 }
+          e.count++
+          e.horas += horasMap.get(s.atividade_nome?.toLowerCase()) || 2
+          map.set(n, e)
+        })
+        setRankingData(
+          Array.from(map.entries())
+            .map(([nome, d]) => ({ nome, count: d.count, horas: d.horas }))
+            .sort((a, b) => b.horas - a.horas || b.count - a.count)
+            .slice(0, 5)
+        )
+      })
+      .catch(() => setRankingData([]))
+      .finally(() => setRankingLoading(false))
+  }, [submitted, rankingPeriod, atividades])
 
   function toggleCondutor(nome: string) {
     setCondutoresSelecionados(prev => {
@@ -682,7 +728,8 @@ export default function FormCertificado() {
                               atividade: nomeAtividade === 'Avaliallos (Processo avaliativo)'
                                 ? 'Monitoria formativa de psicoterapia'
                                 : nomeAtividade,
-                              data: new Date().toISOString().split('T')[0],
+                              data: info.dataInicio || new Date().toISOString().split('T')[0],
+                              dataFim: info.dataFim || new Date().toISOString().split('T')[0],
                               cargaHoraria: info.horas,
                               cargaHorariaExtenso: horasExtenso(info.horas),
                             }}
@@ -741,6 +788,89 @@ export default function FormCertificado() {
                       </svg>
                       Conhecer o Processo Seletivo de Estágio e Bolsa
                     </a>
+                  </div>
+
+                  {/* Google review CTA */}
+                  <a href="https://search.google.com/local/writereview?placeid=ChIJRU1omzaXpgARA4UFQLEIq4g" target="_blank" rel="noopener noreferrer"
+                    className="block rounded-xl p-5 text-center transition-all hover:-translate-y-0.5"
+                    style={{ background: 'linear-gradient(135deg, rgba(251,188,5,0.06), rgba(234,67,53,0.04))', border: '1px solid rgba(251,188,5,0.15)' }}>
+                    <div className="flex items-center justify-center gap-3">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A10.96 10.96 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                      </svg>
+                      <div className="text-left">
+                        <p className="font-dm text-sm font-bold" style={{ color: 'rgba(253,251,247,0.8)' }}>Gostou da experiência?</p>
+                        <p className="font-dm text-xs" style={{ color: 'rgba(253,251,247,0.4)' }}>Avalie a Allos no Google e ajude outras pessoas!</p>
+                      </div>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(253,251,247,.3)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </div>
+                  </a>
+
+                  {/* Ranking */}
+                  <div className="rounded-xl overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div className="px-5 py-4 flex items-center gap-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                      <Sparkles size={16} style={{ color: '#FBBC05' }} />
+                      <span className="font-dm text-sm font-medium" style={{ color: 'rgba(253,251,247,0.7)' }}>Top 5 — Quem mais participou</span>
+                    </div>
+                    <div className="px-5 py-3 flex flex-wrap gap-1.5" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                      {(Object.keys(RANKING_LABELS) as RankingPeriod[]).map(p => (
+                        <button key={p} onClick={() => setRankingPeriod(p)}
+                          className="font-dm text-[11px] px-3 py-1.5 rounded-full transition-all"
+                          style={{
+                            backgroundColor: rankingPeriod === p ? 'rgba(251,188,5,0.12)' : 'rgba(255,255,255,0.03)',
+                            color: rankingPeriod === p ? '#FBBC05' : 'rgba(253,251,247,0.35)',
+                            border: `1px solid ${rankingPeriod === p ? 'rgba(251,188,5,0.3)' : 'rgba(255,255,255,0.06)'}`,
+                          }}>
+                          {RANKING_LABELS[p]}
+                        </button>
+                      ))}
+                    </div>
+                    {rankingLoading ? (
+                      <div className="flex justify-center py-8">
+                        <div className="w-5 h-5 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: 'rgba(253,251,247,0.1)', borderTopColor: 'transparent' }} />
+                      </div>
+                    ) : rankingData.length === 0 ? (
+                      <div className="py-8 text-center">
+                        <p className="font-dm text-xs" style={{ color: 'rgba(253,251,247,0.25)' }}>Nenhuma participação neste período</p>
+                      </div>
+                    ) : (
+                      <div>
+                        {rankingData.map((entry, i) => {
+                          const medals = ['#FFD700', '#C0C0C0', '#CD7F32']
+                          const isMedal = i < 3
+                          const isMe = entry.nome.toLowerCase() === nomeCompleto.trim().toLowerCase()
+                          return (
+                            <div key={entry.nome}
+                              className="flex items-center gap-3 px-5 py-3"
+                              style={{
+                                borderBottom: i < rankingData.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                                backgroundColor: isMe ? 'rgba(200,75,49,0.06)' : i === 0 ? 'rgba(251,188,5,0.03)' : 'transparent',
+                              }}>
+                              <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-fraunces font-bold text-xs"
+                                style={{
+                                  backgroundColor: isMedal ? `${medals[i]}15` : 'rgba(255,255,255,0.04)',
+                                  color: isMedal ? medals[i] : 'rgba(253,251,247,0.3)',
+                                  border: `1.5px solid ${isMedal ? `${medals[i]}30` : 'rgba(255,255,255,0.06)'}`,
+                                }}>
+                                {i + 1}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-dm text-xs font-medium truncate" style={{ color: isMe ? '#C84B31' : 'rgba(253,251,247,0.7)' }}>
+                                  {entry.nome} {isMe && <span className="text-[10px] opacity-60">(você)</span>}
+                                </p>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <span className="font-fraunces font-bold text-sm" style={{ color: isMedal ? medals[i] : 'rgba(253,251,247,0.4)' }}>{entry.horas}h</span>
+                                <p className="font-dm text-[9px]" style={{ color: 'rgba(253,251,247,0.25)' }}>{entry.count} {entry.count === 1 ? 'grupo' : 'grupos'}</p>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
                   </div>
 
                   {/* Final message */}

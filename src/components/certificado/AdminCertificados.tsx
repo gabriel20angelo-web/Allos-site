@@ -8,7 +8,7 @@ import {
   Plus, Trash2, Eye, EyeOff, ChevronRight,
   Award, MessageSquare, Search, Download, CheckSquare, Square,
   X, AlertTriangle, RefreshCw, Filter, Check, Edit3, Phone, ChevronDown,
-  Upload
+  Upload, Trophy
 } from 'lucide-react'
 const CertificateGenerator = dynamic(() => import('./CertificateGenerator'), { ssr: false })
 import FormacaoBase from './FormacaoBase'
@@ -250,8 +250,24 @@ export default function AdminCertificados() {
       prevAvgCond = prevSubs.length > 0 ? prevSubs.reduce((a, x) => a + x.nota_condutor, 0) / prevSubs.length : 0
     }
 
-    return { total, avgGroup, avgCond, relatos, conductorRanking, activityDist, prevTotal, prevAvgGroup, prevAvgCond }
-  }, [filteredSubmissions, submissions, timeFilter])
+    // Participant ranking (top 5 by hours)
+    const pMap = new Map<string, { count: number; horas: number }>()
+    const horasLookup = new Map<string, number>()
+    atividades.forEach(a => horasLookup.set(a.nome.toLowerCase(), a.carga_horaria))
+    s.forEach(x => {
+      const nome = x.nome_completo.trim()
+      const e = pMap.get(nome) || { count: 0, horas: 0 }
+      e.count++
+      e.horas += horasLookup.get(x.atividade_nome?.toLowerCase()) || 2
+      pMap.set(nome, e)
+    })
+    const participantRanking = Array.from(pMap.entries())
+      .map(([nome, d]) => ({ nome, count: d.count, horas: d.horas }))
+      .sort((a, b) => b.horas - a.horas || b.count - a.count)
+      .slice(0, 5)
+
+    return { total, avgGroup, avgCond, relatos, conductorRanking, activityDist, participantRanking, prevTotal, prevAvgGroup, prevAvgCond }
+  }, [filteredSubmissions, submissions, timeFilter, atividades])
 
   // ─── Conductor detail ──────────────────────────────────────────
   const conductorDetail = useMemo(() => {
@@ -739,6 +755,42 @@ export default function AdminCertificados() {
                   )}
                 </Card>
               </div>
+
+              {/* Participant ranking */}
+              <Card title="Top 5 — Quem mais participou" icon={<Trophy size={16} />}>
+                {metrics.participantRanking.length > 0 ? (
+                  <div className="space-y-1">
+                    {metrics.participantRanking.map((entry, i) => {
+                      const medals = ['#FFD700', '#C0C0C0', '#CD7F32']
+                      const isMedal = i < 3
+                      const maxH = metrics.participantRanking[0]?.horas || 1
+                      return (
+                        <div key={entry.nome} className="flex items-center gap-3 p-2.5 rounded-lg"
+                          style={{ backgroundColor: i === 0 ? 'rgba(251,188,5,0.04)' : 'transparent' }}>
+                          <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-fraunces font-bold text-xs"
+                            style={{
+                              backgroundColor: isMedal ? `${medals[i]}15` : 'rgba(255,255,255,0.04)',
+                              color: isMedal ? medals[i] : 'rgba(253,251,247,0.3)',
+                              border: `1.5px solid ${isMedal ? `${medals[i]}30` : 'rgba(255,255,255,0.06)'}`,
+                            }}>
+                            {i + 1}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-dm text-sm font-medium truncate" style={{ color: i === 0 ? 'rgba(253,251,247,0.95)' : 'rgba(253,251,247,0.7)' }}>{entry.nome}</p>
+                            <div className="mt-1 h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}>
+                              <div className="h-full rounded-full" style={{ width: `${(entry.horas / maxH) * 100}%`, background: isMedal ? `linear-gradient(90deg, ${medals[i]}, ${medals[i]}88)` : 'rgba(253,251,247,0.15)' }} />
+                            </div>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <span className="font-fraunces font-bold text-sm" style={{ color: isMedal ? medals[i] : 'rgba(253,251,247,0.4)' }}>{entry.horas}h</span>
+                            <p className="font-dm text-[10px]" style={{ color: 'rgba(253,251,247,0.25)' }}>{entry.count} {entry.count === 1 ? 'grupo' : 'grupos'}</p>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                ) : <Empty message="Sem dados neste período" />}
+              </Card>
             </motion.div>
           )}
 

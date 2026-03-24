@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -8,11 +9,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-14">
           <div>
             <div className="flex items-center gap-2.5 mb-5">
-              <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
-                <circle cx="18" cy="18" r="16" stroke="#2E9E8F" strokeWidth="1" strokeDasharray="4 2.5" opacity=".6"/>
-                <circle cx="18" cy="18" r="8.5" stroke="#2E9E8F" strokeWidth="1.2"/>
-                <circle cx="18" cy="18" r="2.5" fill="#2E9E8F"/>
-              </svg>
+              <Image src="/Icone_Allos_Verde.png" alt="Allos" width={32} height={32} />
               <span className="font-fraunces font-bold text-lg text-[#FDFBF7] tracking-wide">Allos</span>
             </div>
             <p className="font-dm text-[rgba(253,251,247,.5)] text-sm leading-relaxed">
@@ -42,7 +39,7 @@ export default function Footer() {
             </nav>
           </div>
         </div>
-        <div className="flex gap-3 mb-12">
+        <div className="flex gap-3 mb-6">
           <a href="https://www.instagram.com/associacaoallos/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
             className="w-9 h-9 rounded-full flex items-center justify-center text-[rgba(253,251,247,.45)] hover:text-[#2E9E8F] transition-all duration-200"
             style={{border:"1px solid rgba(253,251,247,.12)"}}>
@@ -54,6 +51,18 @@ export default function Footer() {
             <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
           </a>
         </div>
+        <a href="https://search.google.com/local/writereview?placeid=ChIJRU1omzaXpgARA4UFQLEIq4g" target="_blank" rel="noopener noreferrer"
+          className="inline-flex items-center gap-2.5 px-5 py-3 rounded-2xl mb-12 transition-all hover:-translate-y-0.5"
+          style={{background:"rgba(251,188,5,0.06)",border:"1px solid rgba(251,188,5,0.18)"}}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A10.96 10.96 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          <span className="font-dm text-sm font-medium" style={{color:"rgba(253,251,247,.65)"}}>Avalie-nos no Google</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(253,251,247,.35)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
         <div className="pt-6 flex flex-col sm:flex-row justify-between items-center gap-3"
           style={{borderTop:"1px solid rgba(253,251,247,.08)"}}>
           <p className="font-dm text-[rgba(253,251,247,.3)] text-xs">© {new Date().getFullYear()} Associação Allos. Todos os direitos reservados.</p>
