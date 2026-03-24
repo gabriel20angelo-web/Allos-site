@@ -1,30 +1,20 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import LoginCertificados from '@/components/certificado/LoginCertificados'
-import AdminCertificados from '@/components/certificado/AdminCertificados'
+import { useEffect } from 'react'
 
 export default function AdminFormacaoPage() {
-  const [auth, setAuth] = useState(false)
-  const [checking, setChecking] = useState(true)
+  const formacaoUrl = process.env.NEXT_PUBLIC_FORMACAO_URL || 'https://formacao.allos.org.br'
 
   useEffect(() => {
-    setAuth(sessionStorage.getItem('certificados_admin') === 'true')
-    setChecking(false)
-  }, [])
+    window.location.href = `${formacaoUrl}/formacao/admin/calendario`
+  }, [formacaoUrl])
 
-  if (checking) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#1A1A1A' }}>
-        <div className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin"
-          style={{ borderColor: 'rgba(200,75,49,0.3)', borderTopColor: 'transparent' }} />
+  return (
+    <div className="min-h-screen flex items-center justify-center" style={{ background: '#111111' }}>
+      <div className="text-center">
+        <div className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin mx-auto mb-4" style={{ borderColor: 'rgba(253,251,247,0.1)', borderTopColor: 'transparent' }} />
+        <p className="font-dm text-sm" style={{ color: 'rgba(253,251,247,0.4)' }}>Redirecionando para o painel de formação...</p>
       </div>
-    )
-  }
-
-  if (!auth) {
-    return <LoginCertificados onSuccess={() => setAuth(true)} />
-  }
-
-  return <AdminCertificados />
+    </div>
+  )
 }

@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, ChevronLeft, Send, Download, AlertCircle, CheckCircle2, Sparkles, Clock, Award } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
 import StarRating from './StarRating'
+
+const FORMACAO_API = process.env.NEXT_PUBLIC_FORMACAO_URL || ''
 import CertificateGenerator from './CertificateGenerator'
 
 interface Atividade {
@@ -84,13 +85,14 @@ export default function FormCertificado() {
   }, [])
 
   async function loadData() {
+    const base = FORMACAO_API || ''
     const [atRes, coRes, evRes] = await Promise.all([
-      supabase.from('certificado_atividades').select('*').eq('ativo', true).order('nome'),
-      supabase.from('certificado_condutores').select('*').eq('ativo', true).order('nome'),
-      fetch('/api/certificados/formacao?type=eventos_ativos').then(r => r.json()),
+      fetch(`${base}/api/certificados/admin?type=atividades`).then(r => r.json()),
+      fetch(`${base}/api/certificados/admin?type=condutores`).then(r => r.json()),
+      fetch(`${base}/api/certificados/formacao?type=eventos_ativos`).then(r => r.json()),
     ])
-    if (atRes.data) setAtividades(atRes.data)
-    if (coRes.data) setCondutores(coRes.data)
+    if (Array.isArray(atRes)) setAtividades(atRes.filter((a: { ativo?: boolean }) => a.ativo !== false))
+    if (Array.isArray(coRes)) setCondutores(coRes.filter((c: { ativo?: boolean }) => c.ativo !== false))
     if (Array.isArray(evRes)) setEventos(evRes)
   }
 
@@ -98,7 +100,8 @@ export default function FormCertificado() {
     if (!nome.trim()) return
     setLoadingHoras(true)
     try {
-      const res = await fetch('/api/certificados/admin', {
+      const base = FORMACAO_API || ''
+      const res = await fetch(`${base}/api/certificados/admin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'get_hours', nome: nome.trim() }),
@@ -115,7 +118,8 @@ export default function FormCertificado() {
   async function claimCertificates() {
     setClaiming(true)
     try {
-      await fetch('/api/certificados/admin', {
+      const base = FORMACAO_API || ''
+      await fetch(`${base}/api/certificados/admin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'claim_certificates', nome: nomeCompleto.trim() }),
@@ -143,7 +147,7 @@ export default function FormCertificado() {
       case 'semester': since = new Date(now.getFullYear(), now.getMonth() < 6 ? 0 : 6, 1); break
       case 'year': since = new Date(now.getFullYear(), 0, 1); break
     }
-    fetch('/api/certificados/admin?type=submissions')
+    fetch(`${FORMACAO_API || ''}/api/certificados/admin?type=submissions`)
       .then(r => r.json())
       .then((subs: { nome_completo: string; atividade_nome: string; created_at: string }[]) => {
         if (!Array.isArray(subs)) { setRankingData([]); return }
@@ -212,10 +216,13 @@ export default function FormCertificado() {
       //   return
       // }
 
-      // Submit
-      const { error: submitError } = await supabase
-        .from('certificado_submissions')
-        .insert({
+      // Submit via Allos formação API
+      const base = FORMACAO_API || ''
+      const submitRes = await fetch(`${base}/api/certificados/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'import_submission',
           nome_completo: nomeCompleto.trim(),
           nome_social: nomeSocial.trim() || null,
           email: email.trim().toLowerCase(),
@@ -224,10 +231,10 @@ export default function FormCertificado() {
           condutores: isEvento ? [] : condutoresSelecionados,
           nota_condutor: isEvento ? (notaCondutor || 5) : notaCondutor,
           relato: relato.trim() || null,
-          certificado_gerado: false,
-        })
-
-      if (submitError) throw submitError
+        }),
+      })
+      const submitData = await submitRes.json()
+      if (submitData.error) throw new Error(submitData.error)
 
       // Fetch updated hours after submission
       await fetchHoras(nomeCompleto)
