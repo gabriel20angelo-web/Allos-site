@@ -43,6 +43,9 @@ export default function NavBar() {
             ))}
           </div>
           <div className="hidden md:flex items-center gap-3">
+            <a href="https://allos.org.br/formacao/auth" className="font-dm text-sm font-medium text-[#C84B31] border border-[#C84B31] px-5 py-2 rounded-full hover:bg-[rgba(200,75,49,.05)] transition-all">
+              Entrar / Criar conta
+            </a>
             <Link href="/parcerias" className="font-dm text-sm font-medium text-[#2E9E8F] border border-[#2E9E8F] px-5 py-2 rounded-full hover:bg-[rgba(46,158,143,.05)] transition-all">
               Parcerias
             </Link>
@@ -81,7 +84,7 @@ export default function NavBar() {
               className="fixed inset-y-0 right-0 w-[80vw] max-w-[320px] z-[101]"
               style={{ background:"#FDFBF7",borderLeft:"1px solid #E5DFD3" }}>
               <div className="flex flex-col gap-6 px-8 py-10 pt-24">
-                {[...links, { label: "Parcerias", href: "/parcerias" }, { label: "Quero me associar", href: "/processoseletivopsi" }].map(l => (
+                {[...links, { label: "Entrar / Criar conta", href: "https://allos.org.br/formacao/auth" }, { label: "Parcerias", href: "/parcerias" }, { label: "Quero me associar", href: "/processoseletivopsi" }].map(l => (
                   <Link key={l.label} href={l.href} onClick={() => setOpen(false)}
                     className="font-fraunces font-bold text-xl text-[#1A1A1A] hover:text-[#2E9E8F] transition-colors">{l.label}</Link>
                 ))}
