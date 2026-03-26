@@ -154,7 +154,6 @@ export default function AdminPanel() {
   }
 
   const filtered = avaliados.filter(a => {
-    if (!a.telefone || a.telefone.replace(/\D/g, '').length < 8) return false
     if (filtro && a.status !== filtro) return false
     if (busca) {
       const q = busca.toLowerCase()
@@ -204,7 +203,7 @@ export default function AdminPanel() {
           { k:'avaliadores' as Tab, l:`Avaliadores (${avalReg.filter(a => a.ativo !== false).length})`, emoji:'👥' },
           { k:'fixos' as Tab, l:'Fixos', emoji:'🕐' },
           { k:'avulsos' as Tab, l:'Avulsos', emoji:'📅' },
-          { k:'fila' as Tab, l:`Fila (${avaliados.filter(a => a.telefone && a.telefone.replace(/\D/g, '').length >= 8).length})`, emoji:'📊' },
+          { k:'fila' as Tab, l:`Fila (${avaliados.length})`, emoji:'📊' },
           { k:'avaliacoes' as Tab, l:'Avaliações', emoji:'📝' },
           { k:'msgs' as Tab, l:'Mensagens', emoji:'💬' },
           { k:'stats' as Tab, l:'Estatísticas', emoji:'📊' },
