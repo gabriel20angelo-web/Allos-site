@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '@/lib/supabase'
+import { getFormacaoAdmin } from '@/lib/supabaseFormacao'
 
 export async function DELETE(req: NextRequest) {
-  const sb = getSupabaseAdmin()
+  const sb = getFormacaoAdmin()
 
   // Single delete via query param
   const id = req.nextUrl.searchParams.get('id')

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '@/lib/supabase'
+import { getFormacaoAdmin } from '@/lib/supabaseFormacao'
 
-const sb = () => getSupabaseAdmin()
+const sb = () => getFormacaoAdmin()
 
 export async function GET(req: NextRequest) {
   const type = req.nextUrl.searchParams.get('type')
