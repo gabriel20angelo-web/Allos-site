@@ -95,16 +95,63 @@ export default function FormAvaliado() {
             />
           </div>
 
-          <a
-            href="https://youtube.com/playlist?list=PL1Vwy7VAMFcqh-ACF12DmZ00Z9lxmVaPH&si=VrOmIAaiYmdPJKBv"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-dm text-sm font-medium inline-flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all hover:-translate-y-0.5"
-            style={{ backgroundColor: 'rgba(200,75,49,0.1)', color: '#D4854A', border: '1px solid rgba(200,75,49,0.2)' }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-            Ver playlist completa no YouTube
-          </a>
+          <div className="flex flex-wrap gap-3">
+            <a
+              href="https://youtube.com/playlist?list=PL1Vwy7VAMFcqh-ACF12DmZ00Z9lxmVaPH&si=VrOmIAaiYmdPJKBv"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-dm text-sm font-medium inline-flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all hover:-translate-y-0.5"
+              style={{ backgroundColor: 'rgba(200,75,49,0.1)', color: '#D4854A', border: '1px solid rgba(200,75,49,0.2)' }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              Ver no YouTube
+            </a>
+            <a
+              href="https://allos.org.br/formacao/curso/dicas-psicologia-clinica"
+              className="font-dm text-sm font-medium inline-flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all hover:-translate-y-0.5"
+              style={{ background: 'linear-gradient(135deg, #C84B31, #A33D27)', color: '#fff', boxShadow: '0 4px 16px rgba(200,75,49,0.25)' }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Assistir na plataforma
+            </a>
+          </div>
+        </motion.div>
+
+        {/* CTA Formação */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
+          className="rounded-3xl p-6 md:p-8 mb-8 relative overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, rgba(200,75,49,0.08), rgba(46,158,143,0.06))', border: '1.5px solid rgba(200,75,49,0.2)' }}>
+          <div className="absolute top-0 right-0 w-40 h-40 pointer-events-none" style={{ background: 'radial-gradient(circle at 100% 0%, rgba(200,75,49,0.1) 0%, transparent 70%)' }} />
+          <div className="relative">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[10px] font-dm font-bold tracking-widest uppercase px-2.5 py-1 rounded-full" style={{ background: 'rgba(200,75,49,0.15)', color: '#C84B31', border: '1px solid rgba(200,75,49,0.25)' }}>Novo</span>
+            </div>
+            <h3 className="font-fraunces text-xl mb-2" style={{ color: 'rgba(253,251,247,0.95)' }}>
+              Prepare-se melhor para a avaliação
+            </h3>
+            <p className="font-dm text-sm leading-relaxed mb-5" style={{ color: 'rgba(253,251,247,0.5)' }}>
+              A Allos tem uma plataforma de formação com <strong style={{ color: 'rgba(253,251,247,0.75)' }}>cursos gratuitos, grupos ao vivo e certificados</strong>.
+              Aprenda sobre escuta clínica, intervenções, abertura de sessão, TCC, psicanálise e mais — tudo o que pode ser avaliado no seu processo.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <a
+                href="https://allos.org.br/formacao"
+                className="font-dm text-sm font-bold inline-flex items-center gap-2 px-6 py-3 rounded-xl transition-all hover:-translate-y-0.5 hover:scale-[1.02]"
+                style={{ background: 'linear-gradient(135deg, #C84B31, #A33D27)', color: '#fff', boxShadow: '0 4px 20px rgba(200,75,49,0.3)' }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                Explorar cursos gratuitos
+              </a>
+              <a
+                href="https://allos.org.br/formacao/curso/dicas-psicologia-clinica"
+                className="font-dm text-sm font-medium inline-flex items-center gap-2 px-5 py-3 rounded-xl transition-all hover:-translate-y-0.5"
+                style={{ backgroundColor: 'rgba(253,251,247,0.05)', color: 'rgba(253,251,247,0.7)', border: '1.5px solid rgba(253,251,247,0.1)' }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Curso: Dicas de Psicologia Clínica
+              </a>
+            </div>
+          </div>
         </motion.div>
 
         {/* Avaliação Google */}
@@ -153,6 +200,19 @@ export default function FormAvaliado() {
                 <h4 className="font-fraunces text-lg mb-1" style={{ color: 'rgba(253,251,247,0.95)' }}>Prática Baseada em Evidências</h4>
                 <p className="font-dm text-sm" style={{ color: 'rgba(253,251,247,0.4)' }}>Entenda a história por trás da prática deliberada e a base científica da nossa avaliação.</p>
                 <span className="font-dm text-xs font-medium mt-2 inline-block" style={{ color: '#8B5CF6' }}>Ver página →</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="https://allos.org.br/formacao" className="group block rounded-2xl p-5 transition-all hover:-translate-y-1" style={{ backgroundColor: 'rgba(253,251,247,0.03)', border: '1.5px solid rgba(253,251,247,0.08)', borderLeftWidth: '4px', borderLeftColor: '#C84B31' }}>
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: 'rgba(200,75,49,0.1)' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C84B31" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              </div>
+              <div>
+                <h4 className="font-fraunces text-lg mb-1" style={{ color: 'rgba(253,251,247,0.95)' }}>Plataforma de Formação Allos</h4>
+                <p className="font-dm text-sm" style={{ color: 'rgba(253,251,247,0.4)' }}>Cursos gratuitos, grupos síncronos e certificados digitais. Saiba o que será avaliado e prepare-se com conteúdo de qualidade.</p>
+                <span className="font-dm text-xs font-medium mt-2 inline-block" style={{ color: '#C84B31' }}>Acessar formação →</span>
               </div>
             </div>
           </a>
